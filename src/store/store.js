@@ -5,6 +5,7 @@ import uiReducer from './slices/uiSlice';
 import marketReducer from './slices/marketSlice';
 import seedsReducer from './slices/seedsSlice';
 import productsReducer from './slices/productsSlice';
+import droneReducer from './slices/droneSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     market: marketReducer,
     seeds: seedsReducer,
     products: productsReducer,
+    drone: droneReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
