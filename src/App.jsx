@@ -1,82 +1,127 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { checkSession } from '@/store/slices/authSlice';
-import { Header } from '@/components/layout/Header';
-import { Login } from '@/pages/Login';
-import { Dashboard } from '@/pages/Dashboard';
-import { DashboardSkeleton } from '@/components/common/LoadingSkeleton';
+import { useSelector } from 'react-redux';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import './App.css';
 
-function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useSelector((state) => state.auth);
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <DashboardSkeleton />
-      </div>
-    );
-  }
-
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
-}
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  return isAuthenticated ? children : <Navigate to="/" replace />;
+};
 
 function App() {
-  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
-  const [initializing, setInitializing] = useState(true);
-
-  useEffect(() => {
-    // Check for existing session on mount
-    dispatch(checkSession()).finally(() => {
-      setInitializing(false);
-    });
-  }, [dispatch]);
-
-  if (initializing) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <Router>
-      <div className="min-h-screen bg-background">
-        <Routes>
-          {/* Public Routes */}
-          <Route 
-            path="/login" 
-            element={
-              isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
-            } 
-          />
+      <Routes>
+        {/* Public Route */}
+        <Route 
+          path="/" 
+          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />} 
+        />
+        
+        {/* Protected Dashboard */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Placeholder routes for features - will be implemented next */}
+        <Route 
+          path="/weather" 
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <h1 className="text-3xl font-bold font-telugu">వాతావరణం</h1>
+                  <p className="text-xl font-telugu">త్వరలో వస్తుంది...</p>
+                  <p className="text-lg font-poppins text-gray-600">Coming Soon...</p>
+                </div>
+              </div>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/crops" 
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <h1 className="text-3xl font-bold font-telugu">పంట సలహాలు</h1>
+                  <p className="text-xl font-telugu">త్వరలో వస్తుంది...</p>
+                  <p className="text-lg font-poppins text-gray-600">Coming Soon...</p>
+                </div>
+              </div>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/seeds" 
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <h1 className="text-3xl font-bold font-telugu">విత్తన రకాలు</h1>
+                  <p className="text-xl font-telugu">త్వరలో వస్తుంది...</p>
+                  <p className="text-lg font-poppins text-gray-600">Coming Soon...</p>
+                </div>
+              </div>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/products" 
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <h1 className="text-3xl font-bold font-telugu">వ్యవసాయ దుకాణం</h1>
+                  <p className="text-xl font-telugu">త్వరలో వస్తుంది...</p>
+                  <p className="text-lg font-poppins text-gray-600">Coming Soon...</p>
+                </div>
+              </div>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/market-prices" 
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <h1 className="text-3xl font-bold font-telugu">మార్కెట్ ధరలు</h1>
+                  <p className="text-xl font-telugu">త్వరలో వస్తుంది...</p>
+                  <p className="text-lg font-poppins text-gray-600">Coming Soon...</p>
+                </div>
+              </div>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/drone-booking" 
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <h1 className="text-3xl font-bold font-telugu">డ్రోన్ బుకింగ్</h1>
+                  <p className="text-xl font-telugu">త్వరలో వస్తుంది...</p>
+                  <p className="text-lg font-poppins text-gray-600">Coming Soon...</p>
+                </div>
+              </div>
+            </ProtectedRoute>
+          } 
+        />
 
-          {/* Protected Routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Header />
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Default redirect */}
-          <Route 
-            path="/" 
-            element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} 
-          />
-
-          {/* Catch all - redirect to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
+        {/* Catch all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </Router>
   );
 }
