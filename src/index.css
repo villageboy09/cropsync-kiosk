@@ -1,35 +1,361 @@
 @import "tailwindcss";
 
 /* Font imports */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap');
 
 @theme {
-  /* Font families */
-  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
-  
-  /* Border radius */
-  --radius: 0.5rem;
+  /* Premium Font - Inter for cleaner look */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Border radius - slightly larger for modern feel */
+  --radius: 0.75rem;
+}
+
+/* CSS Variables for premium color palette */
+:root {
+  /* Background and foreground */
+  --background: 210 20% 98%;
+  --foreground: 224 71% 4%;
+
+  /* Card */
+  --card: 0 0% 100%;
+  --card-foreground: 224 71% 4%;
+
+  /* Popover */
+  --popover: 0 0% 100%;
+  --popover-foreground: 224 71% 4%;
+
+  /* Primary - Sophisticated emerald */
+  --primary: 152 60% 40%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary - Warm neutral */
+  --secondary: 220 14% 96%;
+  --secondary-foreground: 220 9% 46%;
+
+  /* Muted */
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 9% 46%;
+
+  /* Accent - Soft amber */
+  --accent: 38 92% 50%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Border and input */
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 152 60% 40%;
+
+  /* Success */
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 100%;
+
+  /* Warning */
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
 }
 
 /* Base styles */
 * {
-  border-color: hsl(0 0% 89.8%);
+  border-color: hsl(var(--border));
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background-color: hsl(0 0% 100%);
-  color: hsl(0 0% 3.9%);
-  font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+}
+
+/* Premium scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
 }
 
 /* Custom utility classes */
+@utility font-sans {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
 @utility font-poppins {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 @utility font-telugu {
   font-family: 'Noto Sans Telugu', sans-serif;
+}
+
+/* Premium glass effect */
+@utility glass {
+  background: hsl(var(--card) / 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@utility glass-strong {
+  background: hsl(var(--card) / 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Premium shadows */
+@utility shadow-premium {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+}
+
+@utility shadow-premium-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
+
+@utility shadow-premium-lg {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+}
+
+@utility shadow-premium-xl {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+}
+
+/* Gradient utilities */
+@utility gradient-primary {
+  background: linear-gradient(135deg, hsl(152 60% 40%) 0%, hsl(152 60% 32%) 100%);
+}
+
+@utility gradient-accent {
+  background: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(28 92% 45%) 100%);
+}
+
+@utility gradient-subtle {
+  background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary)) 100%);
+}
+
+/* Premium animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Animation utilities */
+@utility animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@utility animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out;
+}
+
+@utility animate-fade-in-down {
+  animation: fade-in-down 0.4s ease-out;
+}
+
+@utility animate-scale-in {
+  animation: scale-in 0.3s ease-out;
+}
+
+@utility animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+@utility animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+@utility animate-shimmer {
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(90deg, hsl(var(--secondary)) 25%, hsl(var(--background)) 50%, hsl(var(--secondary)) 75%);
+  background-size: 200% 100%;
+}
+
+/* Stagger animation delays */
+@utility animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+@utility animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+@utility animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+@utility animation-delay-400 {
+  animation-delay: 400ms;
+}
+
+@utility animation-delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Focus states */
+@utility focus-ring {
+  outline: none;
+  ring-width: 2px;
+  ring-color: hsl(var(--ring) / 0.5);
+  ring-offset-width: 2px;
+}
+
+/* Hover lift effect */
+@utility hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@utility hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -10px rgb(0 0 0 / 0.1);
+}
+
+/* Premium card hover */
+.premium-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -15px rgb(0 0 0 / 0.1);
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: linear-gradient(90deg, hsl(var(--secondary)) 25%, hsl(var(--muted)) 50%, hsl(var(--secondary)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Input focus animation */
+input:focus,
+select:focus,
+textarea:focus {
+  transition: all 0.2s ease;
+}
+
+/* Button press effect */
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Telugu text specific styling */
+.telugu-text {
+  font-family: 'Noto Sans Telugu', sans-serif;
+  line-height: 1.8;
+}
+
+/* Smooth transitions for all interactive elements */
+a, button, input, select, textarea {
+  transition: all 0.2s ease;
+}
+
+/* Premium table styles */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Selection color */
+::selection {
+  background: hsl(var(--primary) / 0.2);
+  color: hsl(var(--foreground));
+}
+
+/* Number input - hide spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }

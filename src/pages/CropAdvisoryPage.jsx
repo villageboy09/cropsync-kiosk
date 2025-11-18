@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Sprout, ArrowLeft, Calendar, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
-import { 
-  fetchFarmerCrops, 
+import { Sprout, ArrowLeft, Calendar, CheckCircle2, Clock, Circle, ChevronRight } from 'lucide-react';
+import {
+  fetchFarmerCrops,
   fetchCropStages,
   setSelectedCrop,
-  clearSelectedCrop 
+  clearSelectedCrop
 } from '@/store/slices/cropAdvisorySlice';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format, differenceInDays } from 'date-fns';
@@ -18,8 +18,8 @@ const CropAdvisoryPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const { farmerCrops, selectedCrop, cropStages, currentStage, loading } = useSelector((state) => state.cropAdvisory);
-  const [view, setView] = useState('list'); // 'list' or 'detail'
+  const { farmerCrops, selectedCrop, cropStages, loading } = useSelector((state) => state.cropAdvisory);
+  const [view, setView] = useState('list');
 
   useEffect(() => {
     if (user?.id) {
@@ -46,24 +46,23 @@ const CropAdvisoryPage = () => {
 
   const getCropAge = (sowingDate) => {
     if (!sowingDate) return null;
-    const days = differenceInDays(new Date(), new Date(sowingDate));
-    return days;
+    return differenceInDays(new Date(), new Date(sowingDate));
   };
 
   const getStageStatus = (stage, sowingDate) => {
     if (!sowingDate) return 'upcoming';
-    
+
     const daysElapsed = getCropAge(sowingDate);
     let cumulativeDays = 0;
     const stageIndex = cropStages.findIndex(s => s.id === stage.id);
-    
+
     for (let i = 0; i < stageIndex; i++) {
       cumulativeDays += cropStages[i].duration_days || 0;
     }
-    
+
     const stageStart = cumulativeDays;
     const stageEnd = cumulativeDays + (stage.duration_days || 0);
-    
+
     if (daysElapsed < stageStart) return 'upcoming';
     if (daysElapsed >= stageStart && daysElapsed < stageEnd) return 'active';
     return 'completed';
@@ -72,130 +71,109 @@ const CropAdvisoryPage = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle2 className="h-5 w-5 text-green-600" />;
+        return <CheckCircle2 className="h-5 w-5 text-primary" />;
       case 'active':
         return <Clock className="h-5 w-5 text-blue-600" />;
-      case 'upcoming':
-        return <AlertCircle className="h-5 w-5 text-gray-400" />;
       default:
-        return null;
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'active':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'upcoming':
-        return 'bg-gray-100 text-gray-600 border-gray-200';
-      default:
-        return 'bg-gray-100 text-gray-600';
+        return <Circle className="h-5 w-5 text-muted-foreground/40" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border/50">
+        <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Sprout className="h-8 w-8 text-green-600" />
-            <h1 className="text-2xl font-bold text-green-600 font-poppins">CropSync</h1>
+            <div className="p-2 bg-primary/10 rounded-xl">
+              <Sprout className="h-6 w-6 text-primary" />
+            </div>
+            <h1 className="text-xl font-bold text-primary">CropSync</h1>
           </div>
-          <Button variant="outline" onClick={handleBack}>
+          <Button variant="ghost" onClick={handleBack}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {view === 'detail' ? 'Back to Crops' : 'Dashboard'}
+            {view === 'detail' ? 'Back' : 'Dashboard'}
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 sm:px-6 py-8 max-w-5xl">
         {/* Page Title */}
-        <div className="mb-6 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 font-telugu mb-2">
-            🌾 పంట సలహాలు
+        <div className="mb-8 animate-fade-in-down">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground font-telugu">
+            పంట సలహాలు
           </h2>
-          <p className="text-xl text-gray-600 font-poppins">
-            Crop Advisory & Growth Tracking
-          </p>
-          <p className="text-sm text-gray-500 font-telugu mt-2">
-            మీ పంటల పెరుగుదల దశలను ట్రాక్ చేయండి
-          </p>
+          <p className="text-muted-foreground">Crop Advisory & Growth Tracking</p>
         </div>
 
         {view === 'list' ? (
           /* Crop List View */
           <>
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {[...Array(3)].map((_, i) => (
-                  <Card key={i}>
-                    <CardContent className="p-6 space-y-3">
-                      <Skeleton className="h-6 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
-                      <Skeleton className="h-10 w-full" />
-                    </CardContent>
-                  </Card>
+                  <Skeleton key={i} className="h-48 rounded-2xl" />
                 ))}
               </div>
             ) : farmerCrops.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-8xl mb-4">🌱</div>
-                <p className="text-xl text-gray-500 font-telugu mb-2">
-                  మీరు ఇంకా పంటలను ఎంపిక చేయలేదు
-                </p>
-                <p className="text-gray-400 font-poppins mb-4">
-                  No crops selected yet
-                </p>
-              </div>
+              <Card className="border-0 shadow-premium-md">
+                <CardContent className="py-16 text-center">
+                  <div className="text-6xl mb-4">🌱</div>
+                  <p className="text-lg text-foreground font-telugu mb-1">
+                    మీరు ఇంకా పంటలను ఎంపిక చేయలేదు
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    No crops selected yet
+                  </p>
+                </CardContent>
+              </Card>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {farmerCrops.map((crop) => {
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {farmerCrops.map((crop, index) => {
                   const cropAge = getCropAge(crop.sowing_dates?.sowing_date);
-                  
+
                   return (
-                    <Card key={crop.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleCropSelect(crop)}>
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
+                    <Card
+                      key={crop.id}
+                      className="group border-0 shadow-premium-md hover:shadow-premium-lg cursor-pointer transition-all duration-300 hover:-translate-y-1 animate-fade-in-up"
+                      style={{ animationDelay: `${index * 75}ms` }}
+                      onClick={() => handleCropSelect(crop)}
+                    >
+                      <CardContent className="p-5">
+                        <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">
-                            <CardTitle className="text-xl font-telugu mb-1">
+                            <h3 className="text-lg font-semibold font-telugu">
                               {crop.crops?.crop_name_te}
-                            </CardTitle>
-                            <p className="text-sm text-gray-600 font-poppins">
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
                               {crop.crops?.crop_name_en}
                             </p>
                           </div>
-                          <span className="text-4xl">{crop.crops?.icon || '🌾'}</span>
+                          <span className="text-3xl">{crop.crops?.icon || '🌾'}</span>
                         </div>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
+
                         {crop.crop_varieties && (
-                          <div>
-                            <p className="text-xs text-gray-500 font-telugu">రకం:</p>
-                            <p className="font-medium font-telugu">{crop.crop_varieties.variety_name_te}</p>
+                          <p className="text-sm text-muted-foreground mb-3 font-telugu">
+                            {crop.crop_varieties.variety_name_te}
+                          </p>
+                        )}
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            {crop.sowing_dates?.sowing_date && (
+                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <Calendar className="h-3.5 w-3.5" />
+                                {format(new Date(crop.sowing_dates.sowing_date), 'MMM d')}
+                              </div>
+                            )}
+                            {cropAge !== null && (
+                              <Badge variant="secondary" className="text-xs">
+                                {cropAge}d
+                              </Badge>
+                            )}
                           </div>
-                        )}
-                        
-                        {crop.sowing_dates?.sowing_date && (
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Calendar className="h-4 w-4" />
-                            <span className="font-poppins">
-                              Sown: {format(new Date(crop.sowing_dates.sowing_date), 'dd MMM yyyy')}
-                            </span>
-                          </div>
-                        )}
-                        
-                        {cropAge !== null && (
-                          <Badge className="bg-green-100 text-green-800 font-poppins">
-                            {cropAge} days old
-                          </Badge>
-                        )}
-                        
-                        <Button className="w-full mt-2 bg-green-600 hover:bg-green-700 font-telugu">
-                          వృద్ధి దశలను చూడండి
-                        </Button>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        </div>
                       </CardContent>
                     </Card>
                   );
@@ -204,88 +182,103 @@ const CropAdvisoryPage = () => {
             )}
           </>
         ) : (
-          /* Crop Detail View with Growth Stages */
-          <div className="max-w-4xl mx-auto">
+          /* Crop Detail View */
+          <div className="max-w-3xl mx-auto">
             {selectedCrop && (
               <>
                 {/* Crop Header */}
-                <Card className="mb-6">
+                <Card className="mb-6 border-0 shadow-premium-md animate-fade-in-up">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-2xl font-bold font-telugu mb-1">
+                        <h3 className="text-xl font-bold font-telugu">
                           {selectedCrop.crops?.crop_name_te}
                         </h3>
-                        <p className="text-gray-600 font-poppins">
-                          {selectedCrop.crops?.crop_name_en} - {selectedCrop.crop_varieties?.variety_name_te}
+                        <p className="text-sm text-muted-foreground">
+                          {selectedCrop.crops?.crop_name_en}
+                          {selectedCrop.crop_varieties && ` · ${selectedCrop.crop_varieties.variety_name_te}`}
                         </p>
                         {selectedCrop.sowing_dates?.sowing_date && (
-                          <p className="text-sm text-gray-500 mt-2 font-poppins">
-                            Sown on: {format(new Date(selectedCrop.sowing_dates.sowing_date), 'dd MMMM yyyy')} 
-                            ({getCropAge(selectedCrop.sowing_dates.sowing_date)} days ago)
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Sown {format(new Date(selectedCrop.sowing_dates.sowing_date), 'MMM d, yyyy')}
+                            <span className="mx-1">·</span>
+                            {getCropAge(selectedCrop.sowing_dates.sowing_date)} days
                           </p>
                         )}
                       </div>
-                      <span className="text-6xl">{selectedCrop.crops?.icon || '🌾'}</span>
+                      <span className="text-5xl">{selectedCrop.crops?.icon || '🌾'}</span>
                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Growth Stages Timeline */}
-                <div className="space-y-4">
-                  <h4 className="text-xl font-bold font-telugu mb-4">పెరుగుదల దశలు</h4>
-                  
+                <div className="space-y-3">
+                  <h4 className="text-base font-semibold font-telugu mb-4">పెరుగుదల దశలు</h4>
+
                   {loading ? (
                     [...Array(4)].map((_, i) => (
-                      <Card key={i}>
-                        <CardContent className="p-6">
-                          <Skeleton className="h-6 w-3/4 mb-2" />
-                          <Skeleton className="h-4 w-full" />
-                        </CardContent>
-                      </Card>
+                      <Skeleton key={i} className="h-24 rounded-xl" />
                     ))
                   ) : cropStages.length === 0 ? (
-                    <Card>
-                      <CardContent className="p-6 text-center text-gray-500">
-                        <p className="font-telugu">ఈ పంటకు దశల సమాచారం అందుబాటులో లేదు</p>
-                        <p className="font-poppins text-sm">No stage information available for this crop</p>
+                    <Card className="border-0 shadow-premium">
+                      <CardContent className="py-8 text-center">
+                        <p className="text-sm text-muted-foreground font-telugu">
+                          ఈ పంటకు దశల సమాచారం అందుబాటులో లేదు
+                        </p>
                       </CardContent>
                     </Card>
                   ) : (
                     cropStages.map((stage, index) => {
                       const status = getStageStatus(stage, selectedCrop.sowing_dates?.sowing_date);
-                      
+
                       return (
-                        <Card key={stage.id} className={`border-2 ${status === 'active' ? 'border-blue-500 shadow-lg' : ''}`}>
-                          <CardContent className="p-6">
-                            <div className="flex items-start gap-4">
-                              <div className="flex-shrink-0">
-                                <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 ${getStatusColor(status)}`}>
+                        <Card
+                          key={stage.id}
+                          className={`border-0 shadow-premium transition-all duration-300 animate-fade-in-up ${
+                            status === 'active' ? 'ring-2 ring-blue-500/30 shadow-premium-md' : ''
+                          }`}
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex gap-4">
+                              {/* Timeline indicator */}
+                              <div className="flex flex-col items-center">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                  status === 'active' ? 'bg-blue-100' :
+                                  status === 'completed' ? 'bg-primary/10' : 'bg-secondary'
+                                }`}>
                                   {getStatusIcon(status)}
                                 </div>
+                                {index < cropStages.length - 1 && (
+                                  <div className={`w-0.5 flex-1 mt-2 ${
+                                    status === 'completed' ? 'bg-primary/30' : 'bg-border'
+                                  }`} />
+                                )}
                               </div>
-                              
-                              <div className="flex-1">
-                                <div className="flex items-start justify-between mb-2">
+
+                              {/* Content */}
+                              <div className="flex-1 pb-4">
+                                <div className="flex items-start justify-between mb-1">
                                   <div>
-                                    <h5 className="text-lg font-bold font-telugu">{stage.stage_name_te}</h5>
-                                    <p className="text-sm text-gray-600 font-poppins">{stage.stage_name_en}</p>
+                                    <h5 className="font-semibold font-telugu">{stage.stage_name_te}</h5>
+                                    <p className="text-xs text-muted-foreground">{stage.stage_name_en}</p>
                                   </div>
-                                  <Badge className={getStatusColor(status)}>
-                                    {status === 'active' ? 'Active' : status === 'completed' ? 'Completed' : 'Upcoming'}
+                                  <Badge variant={status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                                    {stage.duration_days}d
                                   </Badge>
                                 </div>
-                                
-                                <p className="text-sm text-gray-700 font-telugu mb-2">{stage.description_te}</p>
-                                <p className="text-xs text-gray-500 font-poppins">Duration: {stage.duration_days} days</p>
-                                
-                                {status === 'active' && (
-                                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                                    <p className="text-sm font-semibold text-blue-900 font-telugu mb-1">
-                                      ప్రస్తుత దశ సూచనలు:
+
+                                <p className="text-sm text-muted-foreground font-telugu mt-2">
+                                  {stage.description_te}
+                                </p>
+
+                                {status === 'active' && stage.recommendations_te && (
+                                  <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+                                    <p className="text-xs font-medium text-blue-900 mb-1">
+                                      Recommendations:
                                     </p>
-                                    <p className="text-sm text-blue-800 font-telugu">
-                                      {stage.recommendations_te || 'సూచనలు త్వరలో అందుబాటులోకి వస్తాయి'}
+                                    <p className="text-xs text-blue-800 font-telugu">
+                                      {stage.recommendations_te}
                                     </p>
                                   </div>
                                 )}

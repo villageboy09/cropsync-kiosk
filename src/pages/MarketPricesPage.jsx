@@ -3,10 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Sprout, ArrowLeft, Search, Volume2, TrendingUp, TrendingDown, DollarSign, Store } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Sprout, ArrowLeft, Search, TrendingUp, TrendingDown, BarChart3, Store } from 'lucide-react';
 import MarketPriceCard from '@/components/market/MarketPriceCard';
-import StatsCard from '@/components/market/StatsCard';
 import { fetchMarketPrices, fetchDistricts, setSelectedCommodity, setSelectedDistrict } from '@/store/slices/marketSlice';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -19,7 +18,7 @@ const MarketPricesPage = () => {
   const commodities = [
     { id: 'rice', name: 'Rice', nameTe: 'వరి', icon: '🌾' },
     { id: 'cotton', name: 'Cotton', nameTe: 'పత్తి', icon: '🌸' },
-    { id: 'maize', name: 'Maize', nameTe: 'మక్క జొన్న', icon: '🌽' },
+    { id: 'maize', name: 'Maize', nameTe: 'మక్క', icon: '🌽' },
     { id: 'groundnut', name: 'Groundnut', nameTe: 'వేరుశెనగ', icon: '🥜' },
   ];
 
@@ -28,9 +27,9 @@ const MarketPricesPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchMarketPrices({ 
-      commodity: selectedCommodity, 
-      district: selectedDistrict 
+    dispatch(fetchMarketPrices({
+      commodity: selectedCommodity,
+      district: selectedDistrict
     }));
   }, [dispatch, selectedCommodity, selectedDistrict]);
 
@@ -55,124 +54,141 @@ const MarketPricesPage = () => {
   const currentCommodity = commodities.find(c => c.id === selectedCommodity) || commodities[0];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border/50">
+        <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Sprout className="h-8 w-8 text-green-600" />
-            <h1 className="text-2xl font-bold text-green-600 font-poppins">CropSync</h1>
+            <div className="p-2 bg-primary/10 rounded-xl">
+              <Sprout className="h-6 w-6 text-primary" />
+            </div>
+            <h1 className="text-xl font-bold text-primary">CropSync</h1>
           </div>
-          <Button variant="outline" onClick={() => navigate('/dashboard')}>
+          <Button variant="ghost" onClick={() => navigate('/dashboard')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Dashboard
+            Back
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 sm:px-6 py-8 max-w-6xl">
         {/* Page Title */}
-        <div className="mb-6 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 font-telugu mb-2">
-            {currentCommodity.icon} {currentCommodity.nameTe} మార్కెట్ ధరలు
+        <div className="mb-8 animate-fade-in-down">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground font-telugu">
+            మార్కెట్ ధరలు
           </h2>
-          <p className="text-xl text-gray-600 font-poppins">
-            {currentCommodity.name} Market Prices
-          </p>
-          <p className="text-sm text-gray-500 font-telugu mt-2">
-            తేదీ: {new Date().toLocaleDateString('te-IN')}
+          <p className="text-muted-foreground">
+            {currentCommodity.name} Prices · {new Date().toLocaleDateString('en-IN')}
           </p>
         </div>
 
         {/* Commodity Selector */}
-        <div className="mb-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+        <div className="mb-6 animate-fade-in-up">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {commodities.map((commodity) => (
               <Button
                 key={commodity.id}
                 variant={selectedCommodity === commodity.id ? 'default' : 'outline'}
-                className={`h-20 text-lg font-telugu ${
-                  selectedCommodity === commodity.id
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : ''
+                className={`h-16 sm:h-20 flex-col gap-1 ${
+                  selectedCommodity === commodity.id ? '' : 'border-border/60'
                 }`}
                 onClick={() => handleCommodityChange(commodity.id)}
               >
-                <div className="text-center">
-                  <div className="text-3xl mb-1">{commodity.icon}</div>
-                  <div>{commodity.nameTe}</div>
-                </div>
+                <span className="text-2xl">{commodity.icon}</span>
+                <span className="font-telugu text-sm">{commodity.nameTe}</span>
               </Button>
             ))}
           </div>
         </div>
 
-        {/* Search and Audio */}
-        <div className="mb-6 flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+        {/* Search */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="మార్కెట్ శోధించండి: మార్కెట్ పేరు లేదా జిల్లా ద్వారా వెతకండి"
-              className="pl-10 h-12 font-telugu"
+              placeholder="Search markets..."
+              className="pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button className="h-12 bg-orange-500 hover:bg-orange-600 font-telugu">
-            <Volume2 className="mr-2 h-5 w-5" />
-            మార్కెట్ సారాంశం వినండి
-          </Button>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats */}
         {!loading && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-6xl mx-auto">
-            <StatsCard
-              label="Total Markets"
-              labelTe="మొత్తం మార్కెట్లు"
-              value={stats.totalMarkets}
-              icon={Store}
-            />
-            <StatsCard
-              label="Average Price"
-              labelTe="సగటు ధర"
-              value={`₹${stats.avgPrice.toLocaleString('en-IN')}`}
-              icon={DollarSign}
-            />
-            <StatsCard
-              label="Minimum Price"
-              labelTe="కనీస ధర"
-              value={`₹${stats.minPrice.toLocaleString('en-IN')}`}
-              icon={TrendingDown}
-            />
-            <StatsCard
-              label="Maximum Price"
-              labelTe="గరిష్ట ధర"
-              value={`₹${stats.maxPrice.toLocaleString('en-IN')}`}
-              icon={TrendingUp}
-            />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 animate-fade-in-up animation-delay-100">
+            <Card className="border-0 shadow-premium">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Store className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{stats.totalMarkets}</p>
+                    <p className="text-xs text-muted-foreground">Markets</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-premium">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <BarChart3 className="h-4 w-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">₹{stats.avgPrice.toLocaleString('en-IN')}</p>
+                    <p className="text-xs text-muted-foreground">Average</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-premium">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-red-100 rounded-lg">
+                    <TrendingDown className="h-4 w-4 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">₹{stats.minPrice.toLocaleString('en-IN')}</p>
+                    <p className="text-xs text-muted-foreground">Min</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-premium">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <TrendingUp className="h-4 w-4 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">₹{stats.maxPrice.toLocaleString('en-IN')}</p>
+                    <p className="text-xs text-muted-foreground">Max</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
         {/* District Filter */}
-        <div className="mb-6 overflow-x-auto">
+        <div className="mb-6 overflow-x-auto scrollbar-hide">
           <div className="flex gap-2 pb-2">
             <Button
-              variant={selectedDistrict === 'all' ? 'default' : 'outline'}
-              className={`whitespace-nowrap font-telugu ${
-                selectedDistrict === 'all' ? 'bg-green-600 hover:bg-green-700' : ''
-              }`}
+              variant={selectedDistrict === 'all' ? 'default' : 'secondary'}
+              size="sm"
+              className="whitespace-nowrap"
               onClick={() => handleDistrictChange('all')}
             >
-              అన్ని జిల్లాలు
+              All Districts
             </Button>
             {districts.map((district) => (
               <Button
                 key={district}
-                variant={selectedDistrict === district ? 'default' : 'outline'}
-                className={`whitespace-nowrap font-poppins ${
-                  selectedDistrict === district ? 'bg-green-600 hover:bg-green-700' : ''
-                }`}
+                variant={selectedDistrict === district ? 'default' : 'secondary'}
+                size="sm"
+                className="whitespace-nowrap"
                 onClick={() => handleDistrictChange(district)}
               >
                 {district}
@@ -181,33 +197,40 @@ const MarketPricesPage = () => {
           </div>
         </div>
 
-        {/* Market Price Cards */}
+        {/* Market Cards */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(6)].map((_, i) => (
-              <Skeleton key={i} className="h-40" />
+              <Skeleton key={i} className="h-32 rounded-xl" />
             ))}
           </div>
         ) : filteredPrices.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-xl text-gray-500 font-telugu mb-2">
-              ఈ వడపోతలకు సరిపోలే మార్కెట్లు కనుగొనబడలేదు
-            </p>
-            <p className="text-gray-400 font-poppins">
-              No markets found for these filters
-            </p>
-          </div>
+          <Card className="border-0 shadow-premium">
+            <CardContent className="py-16 text-center">
+              <p className="text-lg text-foreground font-telugu mb-1">
+                మార్కెట్లు కనుగొనబడలేదు
+              </p>
+              <p className="text-sm text-muted-foreground">
+                No markets found for these filters
+              </p>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredPrices.map((price, index) => (
-              <MarketPriceCard
+              <div
                 key={index}
-                market={price.market}
-                district={price.district}
-                variety={price.variety}
-                price={price.modal_price}
-                onAudioPlay={(text) => console.log('Play audio:', text)}
-              />
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <MarketPriceCard
+                  market={price.market}
+                  district={price.district}
+                  variety={price.variety}
+                  price={price.modal_price}
+                  onAudioPlay={(text) => console.log('Play audio:', text)}
+                />
+              </div>
             ))}
           </div>
         )}

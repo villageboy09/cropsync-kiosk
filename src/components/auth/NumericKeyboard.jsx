@@ -1,21 +1,21 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Delete, X } from 'lucide-react';
+import { Delete, RotateCcw, ArrowRight } from 'lucide-react';
 
 const NumericKeyboard = ({ onKeyPress, onClear, onBackspace, onLogin, disabled }) => {
   const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-4">
+    <div className="w-full max-w-sm mx-auto space-y-4">
       {/* Number Grid */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-2.5">
         {numbers.map((num) => (
           <Button
             key={num}
             onClick={() => onKeyPress(num)}
             disabled={disabled}
-            className="h-16 text-2xl font-semibold bg-white text-gray-900 hover:bg-gray-100 border-2 border-gray-300 shadow-md"
             variant="outline"
+            className="h-14 text-xl font-semibold bg-white hover:bg-secondary border border-border/60 shadow-sm hover:shadow transition-all duration-200"
           >
             {num}
           </Button>
@@ -23,22 +23,24 @@ const NumericKeyboard = ({ onKeyPress, onClear, onBackspace, onLogin, disabled }
       </div>
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         <Button
           onClick={onClear}
           disabled={disabled}
-          className="h-14 text-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white"
+          variant="secondary"
+          className="h-12 text-sm font-medium"
         >
-          <X className="mr-2 h-5 w-5" />
+          <RotateCcw className="mr-2 h-4 w-4" />
           Clear
         </Button>
         <Button
           onClick={onBackspace}
           disabled={disabled}
-          className="h-14 text-lg font-semibold bg-pink-500 hover:bg-pink-600 text-white"
+          variant="secondary"
+          className="h-12 text-sm font-medium"
         >
-          <Delete className="mr-2 h-5 w-5" />
-          Backspace
+          <Delete className="mr-2 h-4 w-4" />
+          Delete
         </Button>
       </div>
 
@@ -46,9 +48,13 @@ const NumericKeyboard = ({ onKeyPress, onClear, onBackspace, onLogin, disabled }
       <Button
         onClick={onLogin}
         disabled={disabled}
-        className="w-full h-16 text-xl font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg"
+        size="xl"
+        className="w-full h-14 text-base font-semibold"
       >
-        లాగిన్ చేయండి (Login)
+        <span className="font-telugu">లాగిన్</span>
+        <span className="mx-2">·</span>
+        <span>Login</span>
+        <ArrowRight className="ml-2 h-5 w-5" />
       </Button>
     </div>
   );

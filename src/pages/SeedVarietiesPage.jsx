@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sprout, ArrowLeft, Search, Volume2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Sprout, ArrowLeft, Search } from 'lucide-react';
 import SeedCard from '@/components/seeds/SeedCard';
 import SeedDetailModal from '@/components/seeds/SeedDetailModal';
 import { fetchSeeds, setSelectedSeed, clearSelectedSeed, filterSeeds } from '@/store/slices/seedsSlice';
@@ -44,104 +45,94 @@ const SeedVarietiesPage = () => {
 
   const handleOrder = ({ seed, quantity }) => {
     console.log('Order placed:', { seed, quantity });
-    // TODO: Implement order functionality with Supabase
     alert(`Order placed for ${quantity} kg of ${seed.variety_name_te}`);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border/50">
+        <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Sprout className="h-8 w-8 text-green-600" />
-            <h1 className="text-2xl font-bold text-green-600 font-poppins">CropSync</h1>
+            <div className="p-2 bg-primary/10 rounded-xl">
+              <Sprout className="h-6 w-6 text-primary" />
+            </div>
+            <h1 className="text-xl font-bold text-primary">CropSync</h1>
           </div>
-          <Button variant="outline" onClick={() => navigate('/dashboard')}>
+          <Button variant="ghost" onClick={() => navigate('/dashboard')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Dashboard
+            Back
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 sm:px-6 py-8 max-w-6xl">
         {/* Page Title */}
-        <div className="mb-6 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 font-telugu mb-2">
-            🌱 విత్తన రకాలు
+        <div className="mb-8 animate-fade-in-down">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground font-telugu">
+            విత్తన రకాలు
           </h2>
-          <p className="text-xl text-gray-600 font-poppins">
-            Seed Varieties
-          </p>
-          <p className="text-sm text-gray-500 font-telugu mt-2">
-            మీ పంటకు సరైన విత్తనాలను ఎంచుకోండి
-          </p>
+          <p className="text-muted-foreground">Seed Varieties</p>
         </div>
 
-        {/* Search and Audio */}
-        <div className="mb-6 flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+        {/* Search */}
+        <div className="mb-6 animate-fade-in-up">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="విత్తనాలను శోధించండి: పంట పేరు లేదా రకం ద్వారా వెతకండి"
-              className="pl-10 h-12 font-telugu"
+              placeholder="Search seeds by crop or variety..."
+              className="pl-10"
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
-          <Button className="h-12 bg-orange-500 hover:bg-orange-600 font-telugu">
-            <Volume2 className="mr-2 h-5 w-5" />
-            విత్తన సమాచారం వినండి
-          </Button>
         </div>
 
         {/* Results Count */}
         {!loading && (
-          <div className="mb-4 text-center">
-            <p className="text-sm text-gray-600 font-poppins">
-              Showing {filteredSeeds.length} seed {filteredSeeds.length === 1 ? 'variety' : 'varieties'}
+          <div className="mb-4">
+            <p className="text-sm text-muted-foreground">
+              {filteredSeeds.length} {filteredSeeds.length === 1 ? 'variety' : 'varieties'} found
             </p>
           </div>
         )}
 
         {/* Seed Cards Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="space-y-3">
-                <Skeleton className="h-48 w-full" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-10 w-full" />
-              </div>
+              <Skeleton key={i} className="h-72 rounded-2xl" />
             ))}
           </div>
         ) : filteredSeeds.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-8xl mb-4">🌱</div>
-            <p className="text-xl text-gray-500 font-telugu mb-2">
-              విత్తనాలు కనుగొనబడలేదు
-            </p>
-            <p className="text-gray-400 font-poppins mb-4">
-              No seeds found for your search
-            </p>
-            <Button 
-              variant="outline" 
-              onClick={() => handleSearch('')}
-              className="font-poppins"
-            >
-              Clear Search
-            </Button>
-          </div>
+          <Card className="border-0 shadow-premium-md">
+            <CardContent className="py-16 text-center">
+              <div className="text-6xl mb-4">🌱</div>
+              <p className="text-lg text-foreground font-telugu mb-1">
+                విత్తనాలు కనుగొనబడలేదు
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                No seeds found
+              </p>
+              <Button variant="secondary" onClick={() => handleSearch('')}>
+                Clear Search
+              </Button>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredSeeds.map((seed) => (
-              <SeedCard
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredSeeds.map((seed, index) => (
+              <div
                 key={seed.id}
-                seed={seed}
-                onViewDetails={handleViewDetails}
-                onBuy={handleBuy}
-              />
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <SeedCard
+                  seed={seed}
+                  onViewDetails={handleViewDetails}
+                  onBuy={handleBuy}
+                />
+              </div>
             ))}
           </div>
         )}
