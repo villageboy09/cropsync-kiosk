@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useSelector } from 'react-redux';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import MarketPricesPage from './pages/MarketPricesPage';
 import './App.css';
 
 // Protected Route Component
@@ -94,13 +95,7 @@ function App() {
           path="/market-prices" 
           element={
             <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <h1 className="text-3xl font-bold font-telugu">మార్కెట్ ధరలు</h1>
-                  <p className="text-xl font-telugu">త్వరలో వస్తుంది...</p>
-                  <p className="text-lg font-poppins text-gray-600">Coming Soon...</p>
-                </div>
-              </div>
+              <MarketPricesPage />
             </ProtectedRoute>
           } 
         />

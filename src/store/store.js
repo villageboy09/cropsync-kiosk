@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
 import cropReducer from './slices/cropSlice';
 import uiReducer from './slices/uiSlice';
+import marketReducer from './slices/marketSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     crop: cropReducer,
     ui: uiReducer,
+    market: marketReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
