@@ -7,6 +7,7 @@ import MarketPricesPage from './pages/MarketPricesPage';
 import SeedVarietiesPage from './pages/SeedVarietiesPage';
 import ProductsPage from './pages/ProductsPage';
 import DroneBookingPage from './pages/DroneBookingPage';
+import CropAdvisoryPage from './pages/CropAdvisoryPage';
 import './App.css';
 
 // Protected Route Component
@@ -53,16 +54,10 @@ function App() {
           } 
         />
         <Route 
-          path="/crops" 
+          path="/crop-advisory" 
           element={
             <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <h1 className="text-3xl font-bold font-telugu">పంట సలహాలు</h1>
-                  <p className="text-xl font-telugu">త్వరలో వస్తుంది...</p>
-                  <p className="text-lg font-poppins text-gray-600">Coming Soon...</p>
-                </div>
-              </div>
+              <CropAdvisoryPage />
             </ProtectedRoute>
           } 
         />
