@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import MarketPricesPage from './pages/MarketPricesPage';
+import SeedVarietiesPage from './pages/SeedVarietiesPage';
 import './App.css';
 
 // Protected Route Component
@@ -67,13 +68,7 @@ function App() {
           path="/seeds" 
           element={
             <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <h1 className="text-3xl font-bold font-telugu">విత్తన రకాలు</h1>
-                  <p className="text-xl font-telugu">త్వరలో వస్తుంది...</p>
-                  <p className="text-lg font-poppins text-gray-600">Coming Soon...</p>
-                </div>
-              </div>
+              <SeedVarietiesPage />
             </ProtectedRoute>
           } 
         />

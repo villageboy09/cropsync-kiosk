@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import cropReducer from './slices/cropSlice';
 import uiReducer from './slices/uiSlice';
 import marketReducer from './slices/marketSlice';
+import seedsReducer from './slices/seedsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     crop: cropReducer,
     ui: uiReducer,
     market: marketReducer,
+    seeds: seedsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
