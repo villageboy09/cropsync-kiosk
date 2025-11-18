@@ -7,6 +7,7 @@ import seedsReducer from './slices/seedsSlice';
 import productsReducer from './slices/productsSlice';
 import droneReducer from './slices/droneSlice';
 import cropAdvisoryReducer from './slices/cropAdvisorySlice';
+import weatherReducer from './slices/weatherSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     products: productsReducer,
     drone: droneReducer,
     cropAdvisory: cropAdvisoryReducer,
+    weather: weatherReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
