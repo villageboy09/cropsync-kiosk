@@ -9,20 +9,87 @@
   --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
   
   /* Border radius */
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 }
 
 /* Base styles */
-* {
-  border-color: hsl(0 0% 89.8%);
+:root {
+  /* Primary - Deep Emerald Green */
+  --primary: 150 60% 25%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary - Vibrant Leaf Green */
+  --secondary: 142 70% 45%;
+  --secondary-foreground: 0 0% 100%;
+
+  /* Accent - Golden Harvest */
+  --accent: 35 90% 55%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Backgrounds */
+  --background: 150 20% 98%; /* Very subtle green tint */
+  --foreground: 150 60% 10%;
+
+  /* Cards & Surfaces */
+  --card: 0 0% 100%;
+  --card-foreground: 150 60% 10%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 150 60% 10%;
+
+  /* UI Elements */
+  --muted: 150 20% 94%;
+  --muted-foreground: 150 10% 40%;
+
+  --border: 150 20% 90%;
+  --input: 150 20% 90%;
+  --ring: 142 70% 45%;
+
+  /* Status */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+}
+
+.dark {
+  --background: 150 50% 5%;
+  --foreground: 150 20% 98%;
+
+  --card: 150 50% 8%;
+  --card-foreground: 150 20% 98%;
+
+  --popover: 150 50% 8%;
+  --popover-foreground: 150 20% 98%;
+
+  --primary: 142 70% 45%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 150 60% 25%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 150 30% 15%;
+  --muted-foreground: 150 20% 65%;
+
+  --accent: 35 90% 55%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 150 30% 15%;
+  --input: 150 30% 15%;
+  --ring: 142 70% 45%;
 }
 
 body {
-  background-color: hsl(0 0% 100%);
-  color: hsl(0 0% 3.9%);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(142, 70%, 45%, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(35, 90%, 55%, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
 /* Custom utility classes */
@@ -32,4 +99,32 @@ body {
 
 @utility font-telugu {
   font-family: 'Noto Sans Telugu', sans-serif;
+}
+
+/* Glassmorphism */
+@utility glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.dark .glass {
+  background: rgba(20, 40, 30, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient Text */
+@utility text-gradient {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@utility text-gradient-accent {
+  background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

@@ -1,22 +1,12 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useSelector } from 'react-redux';
+import { Header } from '@/components/layout/Header';
 import DashboardCard from '@/components/layout/DashboardCard';
-import { Sprout, LogOut } from 'lucide-react';
-import { setUser } from '@/store/slices/authSlice';
 import { dashboardImages } from '@/lib/images';
+import { motion } from 'framer-motion';
 
 const DashboardPage = () => {
   const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    dispatch(setUser(null));
-    navigate('/');
-  };
 
   const handleAudioPlay = (text) => {
     // Placeholder for text-to-speech functionality
@@ -37,7 +27,7 @@ const DashboardPage = () => {
       title: 'Crop Advice',
       titleTe: 'పంట సలహాలు',
       image: dashboardImages.cropAdvice,
-      route: '/crops',
+      route: '/crop-advisory',
       borderColor: 'border-green-500',
     },
     {
@@ -74,58 +64,48 @@ const DashboardPage = () => {
     },
   ];
 
-  const getUserInitial = () => {
-    return user?.full_name?.charAt(0)?.toUpperCase() || 'F';
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Sprout className="h-8 w-8 text-green-600" />
-            <h1 className="text-2xl font-bold text-green-600 font-poppins">
-              CropSync
-            </h1>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-12 w-12 cursor-pointer border-2 border-green-600">
-              <AvatarImage src={user?.profile_image_url} />
-              <AvatarFallback className="bg-green-600 text-white text-lg font-bold">
-                {getUserInitial()}
-              </AvatarFallback>
-            </Avatar>
-            <Button
-              variant="outline"
-              onClick={handleLogout}
-              className="font-poppins"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <Header />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 pb-20">
         {/* Welcome Section */}
-        <div className="mb-8 text-center">
-          <h2 className="text-4xl font-bold text-gray-900 font-telugu mb-2">
-            స్వాగతం, {user?.full_name}!
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-10 text-center space-y-2"
+        >
+          <h2 className="text-4xl md:text-5xl font-bold font-telugu text-gradient mb-3">
+            స్వాగతం, {user?.user_metadata?.full_name || 'రైతు'}!
           </h2>
-          <p className="text-xl text-gray-600 font-poppins">
-            Welcome, {user?.full_name}!
+          <p className="text-xl text-muted-foreground font-poppins">
+            Welcome, {user?.user_metadata?.full_name || 'Farmer'}!
           </p>
-        </div>
+        </motion.div>
 
         {/* Feature Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-          {features.map((feature) => (
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+        >
+          {features.map((feature, index) => (
             <DashboardCard
               key={feature.id}
+              index={index}
               title={feature.title}
               titleTe={feature.titleTe}
               image={feature.image}
@@ -134,7 +114,7 @@ const DashboardPage = () => {
               onAudioPlay={() => handleAudioPlay(feature.titleTe)}
             />
           ))}
-        </div>
+        </motion.div>
       </main>
     </div>
   );
