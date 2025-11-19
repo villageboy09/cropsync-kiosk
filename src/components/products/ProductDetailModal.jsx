@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Store, Phone, Mail, MapPin, Play } from 'lucide-react';
+import { Store, Phone, Mail, MapPin, Play, ShoppingBag } from 'lucide-react';
 import ImageCarousel from '@/components/common/ImageCarousel';
 
 const ProductDetailModal = ({ product, isOpen, onClose, onInquire }) => {
@@ -25,20 +25,31 @@ const ProductDetailModal = ({ product, isOpen, onClose, onInquire }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto glass border-primary/20">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-telugu">{product.product_name_te}</DialogTitle>
-          <DialogDescription className="font-poppins">{product.product_name_en}</DialogDescription>
+          <div className="flex items-center justify-between pr-8">
+            <div>
+              <DialogTitle className="text-3xl font-bold font-telugu text-primary mb-1">
+                {product.product_name_te}
+              </DialogTitle>
+              <DialogDescription className="font-poppins text-lg text-muted-foreground">
+                {product.product_name_en}
+              </DialogDescription>
+            </div>
+            <Badge variant="outline" className="text-lg px-4 py-1 border-primary/30 text-primary">
+              {product.category_te || product.category}
+            </Badge>
+          </div>
         </DialogHeader>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-8 mt-4">
           {/* Left: Images/Video */}
           <div className="space-y-4">
             {product.video_url ? (
               <div className="space-y-4">
-                <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
-                  <video 
-                    controls 
+                <div className="relative aspect-video bg-black/90 rounded-xl overflow-hidden shadow-lg border border-primary/20">
+                  <video
+                    controls
                     className="w-full h-full"
                     poster={images[0]}
                   >
@@ -46,77 +57,85 @@ const ProductDetailModal = ({ product, isOpen, onClose, onInquire }) => {
                     Your browser does not support the video tag.
                   </video>
                 </div>
-                {images.length > 0 && <ImageCarousel images={images} alt={product.product_name_te} />}
+                {images.length > 0 && <ImageCarousel images={images} alt={product.product_name_te} className="rounded-xl border border-primary/10" />}
+              </div>
+            ) : images.length > 0 ? (
+              <div className="rounded-xl overflow-hidden shadow-lg border border-primary/20">
+                <ImageCarousel images={images} alt={product.product_name_te} />
               </div>
             ) : (
-              <ImageCarousel images={images} alt={product.product_name_te} />
+              <div className="aspect-video bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+                <ShoppingBag className="h-24 w-24 text-primary/30" />
+              </div>
             )}
 
-            <Badge className="bg-orange-500 text-white font-telugu text-sm">
-              {product.category_te || product.category}
-            </Badge>
-          </div>
-
-          {/* Right: Details */}
-          <div className="space-y-4">
-            {/* Price */}
+            {/* Price Card */}
             {product.price && (
-              <Card className="bg-green-50 border-green-200">
+              <Card className="bg-primary/5 border-primary/10">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-700 font-telugu">ధర:</span>
-                    <span className="text-3xl font-bold text-green-700 font-poppins">
+                    <span className="text-sm text-muted-foreground font-telugu">ధర (Price):</span>
+                    <span className="text-3xl font-bold text-primary font-poppins">
                       ₹{product.price.toLocaleString('en-IN')}
                     </span>
                   </div>
                 </CardContent>
               </Card>
             )}
+          </div>
 
+          {/* Right: Details */}
+          <div className="space-y-6">
             {/* Description */}
-            {product.description_te && (
-              <div className="space-y-2">
-                <h4 className="font-semibold text-gray-900 font-telugu">వివరణ:</h4>
-                <p className="text-sm text-gray-700 font-telugu leading-relaxed">
-                  {product.description_te}
-                </p>
-              </div>
-            )}
+            <div className="space-y-4">
+              {product.description_te && (
+                <div className="space-y-2">
+                  <h4 className="font-bold text-lg text-primary font-telugu">వివరణ (Description):</h4>
+                  <p className="text-base text-foreground/80 font-telugu leading-relaxed bg-white/50 p-4 rounded-lg border border-primary/10">
+                    {product.description_te}
+                  </p>
+                </div>
+              )}
 
-            {product.description_en && (
-              <div className="space-y-2">
-                <h4 className="font-semibold text-gray-900 font-poppins">Description:</h4>
-                <p className="text-sm text-gray-700 font-poppins leading-relaxed">
-                  {product.description_en}
-                </p>
-              </div>
-            )}
+              {product.description_en && (
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground font-poppins leading-relaxed">
+                    {product.description_en}
+                  </p>
+                </div>
+              )}
+            </div>
 
             {/* Vendor Information */}
             {product.advertisers && (
-              <Card className="bg-gray-50 border-gray-200">
-                <CardContent className="p-4 space-y-3">
-                  <h4 className="font-semibold text-gray-900 font-telugu flex items-center gap-2">
-                    <Store className="h-5 w-5 text-green-600" />
-                    విక్రేత సమాచారం
+              <Card className="bg-white/50 border-primary/10">
+                <CardContent className="p-4 space-y-4">
+                  <h4 className="font-bold text-lg text-primary font-telugu flex items-center gap-2 border-b border-primary/10 pb-2">
+                    <Store className="h-5 w-5" />
+                    విక్రేత సమాచారం (Vendor Info)
                   </h4>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-start gap-2">
-                      <Store className="h-4 w-4 text-gray-600 mt-0.5 flex-shrink-0" />
+
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-primary/10 p-2 rounded-full">
+                        <Store className="h-4 w-4 text-primary" />
+                      </div>
                       <div>
-                        <p className="font-medium text-gray-900 font-poppins">
+                        <p className="font-bold text-foreground font-poppins text-base">
                           {product.advertisers.advertiser_name}
                         </p>
+                        <p className="text-xs text-muted-foreground">Verified Seller</p>
                       </div>
                     </div>
 
                     {product.advertisers.contact_number && (
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-gray-600 flex-shrink-0" />
-                        <a 
+                      <div className="flex items-center gap-3">
+                        <div className="bg-primary/10 p-2 rounded-full">
+                          <Phone className="h-4 w-4 text-primary" />
+                        </div>
+                        <a
                           href={`tel:${product.advertisers.contact_number}`}
-                          className="text-green-600 hover:underline font-poppins"
+                          className="text-primary hover:underline font-poppins font-medium"
                         >
                           {product.advertisers.contact_number}
                         </a>
@@ -124,11 +143,13 @@ const ProductDetailModal = ({ product, isOpen, onClose, onInquire }) => {
                     )}
 
                     {product.advertisers.email && (
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-gray-600 flex-shrink-0" />
-                        <a 
+                      <div className="flex items-center gap-3">
+                        <div className="bg-primary/10 p-2 rounded-full">
+                          <Mail className="h-4 w-4 text-primary" />
+                        </div>
+                        <a
                           href={`mailto:${product.advertisers.email}`}
-                          className="text-green-600 hover:underline font-poppins"
+                          className="text-primary hover:underline font-poppins"
                         >
                           {product.advertisers.email}
                         </a>
@@ -136,9 +157,11 @@ const ProductDetailModal = ({ product, isOpen, onClose, onInquire }) => {
                     )}
 
                     {product.advertisers.address && (
-                      <div className="flex items-start gap-2">
-                        <MapPin className="h-4 w-4 text-gray-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-gray-700 font-poppins">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-primary/10 p-2 rounded-full">
+                          <MapPin className="h-4 w-4 text-primary" />
+                        </div>
+                        <p className="text-muted-foreground font-poppins">
                           {product.advertisers.address}
                         </p>
                       </div>
@@ -150,16 +173,16 @@ const ProductDetailModal = ({ product, isOpen, onClose, onInquire }) => {
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose} className="font-poppins">
+        <DialogFooter className="mt-6 gap-3 sm:gap-0">
+          <Button variant="outline" onClick={onClose} className="font-poppins border-primary/20">
             Close
           </Button>
-          <Button 
+          <Button
             onClick={handleInquire}
-            className="bg-green-600 hover:bg-green-700 font-telugu"
+            className="bg-primary hover:bg-primary/90 font-telugu text-lg px-8 shadow-lg shadow-primary/20"
           >
-            <Phone className="mr-2 h-4 w-4" />
-            విక్రేతను సంప్రదించండి
+            <Phone className="mr-2 h-5 w-5" />
+            విక్రేతను సంప్రదించండి (Contact Seller)
           </Button>
         </DialogFooter>
       </DialogContent>

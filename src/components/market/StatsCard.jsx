@@ -3,18 +3,20 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const StatsCard = ({ label, labelTe, value, icon: Icon }) => {
   return (
-    <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          {Icon && <Icon className="h-8 w-8 text-green-600" />}
+    <Card className="glass border-primary/10 hover:shadow-lg transition-all duration-300 group">
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div className="bg-primary/10 p-2 rounded-full group-hover:bg-primary/20 transition-colors">
+            {Icon && <Icon className="h-6 w-6 text-primary" />}
+          </div>
         </div>
-        <div className="text-3xl font-bold text-green-700 font-poppins mb-1">
+        <div className="text-3xl font-bold text-primary font-poppins mb-1 tracking-tight">
           {value}
         </div>
-        <div className="text-sm text-gray-700 font-telugu">
+        <div className="text-sm font-medium text-foreground/80 font-telugu">
           {labelTe}
         </div>
-        <div className="text-xs text-gray-600 font-poppins">
+        <div className="text-xs text-muted-foreground font-poppins">
           {label}
         </div>
       </CardContent>

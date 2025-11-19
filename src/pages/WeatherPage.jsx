@@ -1,188 +1,126 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Header } from '@/components/layout/Header';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sprout, ArrowLeft, Cloud, Droplets, Wind, Volume2, MapPin } from 'lucide-react';
-import { fetchWeatherData } from '@/store/slices/weatherSlice';
-import { Skeleton } from '@/components/ui/skeleton';
-import { format } from 'date-fns';
+import { motion } from 'framer-motion';
+import { Sun, Cloud, CloudRain, Wind, Droplets, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { getWeatherData } from '@/lib/weatherService';
+
+const WeatherIcon = ({ icon, className }) => {
+  switch (icon) {
+    case 'sun': return <Sun className={className} />;
+    case 'rain': return <CloudRain className={className} />;
+    case 'cloudy': return <Cloud className={className} />;
+    default: return <Sun className={className} />;
+  }
+};
 
 const WeatherPage = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
-  const { location, current, forecast, loading } = useSelector((state) => state.weather);
+  const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user?.id) {
-      dispatch(fetchWeatherData(user.id));
-    }
-  }, [dispatch, user]);
+    const fetchWeather = async () => {
+      try {
+        const data = await getWeatherData();
+        setWeather(data);
+      } catch (error) {
+        console.error('Failed to fetch weather', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const getWeatherIcon = (condition) => {
-    const conditionLower = condition?.toLowerCase() || '';
-    if (conditionLower.includes('sunny') || conditionLower.includes('clear')) return '☀️';
-    if (conditionLower.includes('rain')) return '🌧️';
-    if (conditionLower.includes('cloud')) return '☁️';
-    if (conditionLower.includes('storm')) return '⛈️';
-    if (conditionLower.includes('fog') || conditionLower.includes('mist')) return '🌫️';
-    return '🌤️';
-  };
-
-  const getRainfallColor = (chance) => {
-    if (chance >= 70) return 'text-blue-600';
-    if (chance >= 40) return 'text-yellow-600';
-    return 'text-gray-600';
-  };
+    fetchWeather();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Sprout className="h-8 w-8 text-green-600" />
-            <h1 className="text-2xl font-bold text-green-600 font-poppins">CropSync</h1>
-          </div>
-          <Button variant="outline" onClick={() => navigate('/dashboard')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Dashboard
-          </Button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background pb-20">
+      <Header />
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Page Title */}
-        <div className="mb-6 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 font-telugu mb-2">
-            🌦️ వాతావరణం
-          </h2>
-          <p className="text-xl text-gray-600 font-poppins">
-            Weather Updates
-          </p>
-          {location && (
-            <div className="flex items-center justify-center gap-2 mt-2 text-gray-600">
-              <MapPin className="h-4 w-4" />
-              <p className="text-sm font-poppins">
-                {location.village}, {location.district}, {location.state}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Audio Button */}
-        <div className="mb-6 flex justify-center">
-          <Button className="bg-orange-500 hover:bg-orange-600 font-telugu">
-            <Volume2 className="mr-2 h-5 w-5" />
-            వాతావరణ సమాచారం వినండి
+      <main className="container mx-auto px-4 py-6 space-y-6">
+        {/* Navigation */}
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="rounded-full hover:bg-primary/10"
+          >
+            <ArrowLeft className="h-6 w-6" />
           </Button>
+          <h1 className="text-2xl font-bold font-telugu">వాతావరణం (Weather)</h1>
         </div>
 
         {loading ? (
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <Skeleton className="h-32 w-full" />
-              </CardContent>
-            </Card>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[...Array(7)].map((_, i) => (
-                <Skeleton key={i} className="h-40" />
-              ))}
-            </div>
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
-          <>
-            {/* Current Weather */}
-            {current && (
-              <Card className="mb-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                <CardContent className="p-8">
-                  <div className="text-center">
-                    <div className="text-8xl mb-4">{getWeatherIcon(current.condition)}</div>
-                    <h3 className="text-5xl font-bold mb-2 font-poppins">{current.temp}°C</h3>
-                    <p className="text-xl font-telugu mb-1">{current.condition_te}</p>
-                    <p className="text-lg opacity-90 font-poppins">{current.condition}</p>
-                    
-                    <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/30">
-                      <div>
-                        <Droplets className="h-6 w-6 mx-auto mb-2" />
-                        <p className="text-sm opacity-80 font-poppins">Humidity</p>
-                        <p className="text-xl font-bold font-poppins">{current.humidity}%</p>
-                      </div>
-                      <div>
-                        <Wind className="h-6 w-6 mx-auto mb-2" />
-                        <p className="text-sm opacity-80 font-poppins">Wind</p>
-                        <p className="text-xl font-bold font-poppins">{current.wind_speed} km/h</p>
-                      </div>
-                      <div>
-                        <Cloud className="h-6 w-6 mx-auto mb-2" />
-                        <p className="text-sm opacity-80 font-poppins">Rainfall</p>
-                        <p className="text-xl font-bold font-poppins">{current.rainfall} mm</p>
-                      </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            {/* Current Weather Card */}
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-400 to-blue-600 text-white overflow-hidden relative">
+              <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/20 rounded-full blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-white/20 rounded-full blur-3xl"></div>
+
+              <CardContent className="p-8 relative z-10">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-lg font-medium opacity-90">Today</p>
+                    <h2 className="text-6xl font-bold mt-2">{weather.current.temp}°</h2>
+                    <p className="text-xl mt-2 font-medium">{weather.current.condition}</p>
+                  </div>
+                  <WeatherIcon icon={weather.current.icon} className="h-24 w-24 text-yellow-300 animate-pulse" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mt-8">
+                  <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 flex items-center gap-3">
+                    <Wind className="h-6 w-6" />
+                    <div>
+                      <p className="text-xs opacity-80">Wind</p>
+                      <p className="font-bold">{weather.current.windSpeed} km/h</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                  <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 flex items-center gap-3">
+                    <Droplets className="h-6 w-6" />
+                    <div>
+                      <p className="text-xs opacity-80">Humidity</p>
+                      <p className="font-bold">{weather.current.humidity}%</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-            {/* 7-Day Forecast */}
-            <div className="mb-6">
-              <h3 className="text-2xl font-bold mb-4 font-telugu">7 రోజుల అంచనా</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                {forecast.map((day, index) => (
-                  <Card key={index} className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-4 text-center">
-                      <p className="text-sm font-semibold mb-2 font-poppins">
-                        {index === 0 ? 'Today' : format(new Date(day.date), 'EEE')}
-                      </p>
-                      <p className="text-xs text-gray-500 mb-3 font-poppins">
-                        {format(new Date(day.date), 'MMM dd')}
-                      </p>
-                      
-                      <div className="text-5xl mb-3">{getWeatherIcon(day.condition)}</div>
-                      
-                      <div className="space-y-1">
-                        <p className="text-sm font-telugu text-gray-700">{day.condition_te}</p>
-                        <div className="flex items-center justify-center gap-2 text-lg font-bold font-poppins">
-                          <span className="text-red-500">{day.temp_max}°</span>
-                          <span className="text-gray-400">/</span>
-                          <span className="text-blue-500">{day.temp_min}°</span>
-                        </div>
-                        <div className={`flex items-center justify-center gap-1 text-xs ${getRainfallColor(day.rainfall_chance)}`}>
-                          <Droplets className="h-3 w-3" />
-                          <span className="font-poppins">{day.rainfall_chance}%</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+            {/* Forecast */}
+            <div>
+              <h3 className="text-xl font-bold mb-4 font-telugu">రాబోయే 5 రోజులు (Next 5 Days)</h3>
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                {weather.forecast.map((day, index) => (
+                  <motion.div
+                    key={day.day}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Card className="bg-white/60 backdrop-blur-md border-white/20 hover:bg-white/80 transition-colors">
+                      <CardContent className="p-4 flex flex-col items-center justify-center text-center gap-2">
+                        <p className="font-medium text-muted-foreground">{day.day}</p>
+                        <WeatherIcon icon={day.icon} className="h-8 w-8 text-primary" />
+                        <p className="text-xl font-bold">{day.temp}°</p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
             </div>
-
-            {/* Weather Advisory */}
-            <Card className="bg-yellow-50 border-yellow-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-yellow-900 font-telugu">
-                  ⚠️ వ్యవసాయ సలహా
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <p className="text-sm text-yellow-900 font-telugu">
-                  • రాబోయే 3 రోజుల్లో వర్షాలు అంచనా ఉన్నాయి. పంట రక్షణ చర్యలు తీసుకోండి.
-                </p>
-                <p className="text-sm text-yellow-900 font-telugu">
-                  • అధిక తేమ కారణంగా ఫంగల్ వ్యాధుల నివారణకు స్ప్రే చేయండి.
-                </p>
-                <p className="text-sm text-yellow-900 font-telugu">
-                  • నీటి నిర్వహణ మరియు డ్రైనేజీ వ్యవస్థను తనిఖీ చేయండి.
-                </p>
-                <p className="text-xs text-yellow-800 font-poppins mt-3">
-                  Agricultural Advisory: Rainfall expected in next 3 days. Take crop protection measures and check drainage systems.
-                </p>
-              </CardContent>
-            </Card>
-          </>
+          </motion.div>
         )}
       </main>
     </div>
