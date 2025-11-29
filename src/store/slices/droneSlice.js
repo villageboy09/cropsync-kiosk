@@ -25,9 +25,19 @@ export const createBooking = createAsyncThunk(
   'drone/createBooking',
   async (bookingData, { rejectWithValue }) => {
     try {
+      // Generate a simple unique booking ID
+      const bookingIdText = `DRONE-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+      const finalBookingData = {
+        ...bookingData,
+        booking_id_text: bookingIdText,
+        // Ensure status matches schema default or explicit value
+        booking_status: bookingData.booking_status || 'Pending'
+      };
+
       const { data, error } = await supabase
         .from('drone_service_bookings')
-        .insert([bookingData])
+        .insert([finalBookingData])
         .select()
         .single();
 
@@ -58,7 +68,7 @@ const droneSlice = createSlice({
     updateBookingField: (state, action) => {
       const { field, value } = action.payload;
       state.currentBooking[field] = value;
-      
+
       // Recalculate total cost when acres change
       if (field === 'acres') {
         state.currentBooking.total_cost = value * state.currentBooking.rate_per_acre;

@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Header } from '@/components/layout/Header';
-import { Sprout, ArrowLeft, Calendar, DollarSign, Plane, CheckCircle2, History, MapPin } from 'lucide-react';
+import { ArrowLeft, Calendar, Plane, CheckCircle2, History, MapPin, Leaf, Droplets, Wind, ShieldCheck } from 'lucide-react';
 import {
   updateBookingField,
   resetCurrentBooking,
@@ -25,10 +24,10 @@ const DroneBookingPage = () => {
   const [showHistory, setShowHistory] = useState(false);
 
   const cropTypes = [
-    { id: 'rice', name: 'Rice', nameTe: 'వరి', icon: '🌾' },
-    { id: 'cotton', name: 'Cotton', nameTe: 'పత్తి', icon: '🌸' },
-    { id: 'maize', name: 'Maize', nameTe: 'మక్క జొన్న', icon: '🌽' },
-    { id: 'groundnut', name: 'Groundnut', nameTe: 'వేరుశెనగ', icon: '🥜' },
+    { id: 'rice', name: 'Rice', nameTe: 'వరి', icon: '🌾', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
+    { id: 'cotton', name: 'Cotton', nameTe: 'పత్తి', icon: '🌸', color: 'bg-pink-100 text-pink-700 border-pink-200' },
+    { id: 'maize', name: 'Maize', nameTe: 'మక్క జొన్న', icon: '🌽', color: 'bg-orange-100 text-orange-700 border-orange-200' },
+    { id: 'groundnut', name: 'Groundnut', nameTe: 'వేరుశెనగ', icon: '🥜', color: 'bg-amber-100 text-amber-700 border-amber-200' },
   ];
 
   useEffect(() => {
@@ -73,270 +72,254 @@ const DroneBookingPage = () => {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      pending: { color: 'bg-yellow-500/10 text-yellow-600 border-yellow-200', text: 'పెండింగ్' },
-      confirmed: { color: 'bg-blue-500/10 text-blue-600 border-blue-200', text: 'ధృవీకరించబడింది' },
-      completed: { color: 'bg-green-500/10 text-green-600 border-green-200', text: 'పూర్తయింది' },
-      cancelled: { color: 'bg-red-500/10 text-red-600 border-red-200', text: 'రద్దు చేయబడింది' },
+      pending: { color: 'bg-yellow-50 text-yellow-700 border-yellow-200', text: 'పెండింగ్' },
+      confirmed: { color: 'bg-blue-50 text-blue-700 border-blue-200', text: 'ధృవీకరించబడింది' },
+      completed: { color: 'bg-green-50 text-green-700 border-green-200', text: 'పూర్తయింది' },
+      cancelled: { color: 'bg-red-50 text-red-700 border-red-200', text: 'రద్దు చేయబడింది' },
     };
 
     const config = statusConfig[status] || statusConfig.pending;
-    return <Badge variant="outline" className={`${config.color} font-telugu`}>{config.text}</Badge>;
+    return <Badge variant="outline" className={`${config.color} font-telugu px-3 py-1 rounded-full`}>{config.text}</Badge>;
   };
 
   const selectedCrop = cropTypes.find(c => c.id === currentBooking.crop_type);
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <Header />
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Page Title */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex items-center justify-between"
-        >
-          <div>
-            <h2 className="text-3xl font-bold text-gradient font-telugu mb-2">
-              🚁 డ్రోన్ బుకింగ్
-            </h2>
-            <p className="text-muted-foreground font-poppins">
-              Drone Spraying Service
-            </p>
+    <div className="min-h-screen bg-gray-50 font-poppins flex flex-col">
+      {/* Header */}
+      <header className="bg-white px-8 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-[#4ade80] rounded-full flex items-center justify-center shadow-sm">
+            <span className="text-xl font-bold text-white">C</span>
           </div>
-          <Button variant="outline" onClick={() => navigate('/dashboard')} className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Dashboard
-          </Button>
-        </motion.div>
+          <h1 className="text-2xl font-bold text-[#1a5d2c] tracking-tight">CarbonMint</h1>
+        </div>
 
-        {/* Success Message */}
-        <AnimatePresence>
-          {bookingSuccess && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="max-w-2xl mx-auto mb-8"
-            >
-              <Card className="bg-green-500/10 border-green-500/20">
-                <CardContent className="p-4 flex items-center gap-4">
-                  <div className="bg-green-500/20 p-2 rounded-full">
-                    <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-green-700 font-telugu text-lg">
-                      బుకింగ్ విజయవంతమైంది!
-                    </p>
-                    <p className="text-sm text-green-600 font-poppins">
-                      Your booking has been confirmed. We'll contact you soon.
-                    </p>
-                  </div>
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={() => navigate('/dashboard')}
+            className="bg-[#4ade80] hover:bg-[#22c55e] text-white font-bold font-telugu"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            డాష్‌బోర్డ్ (Dashboard)
+          </Button>
+        </div>
+      </header>
+
+      <main className="flex-1 p-8 overflow-y-auto">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Title Section */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h2 className="text-3xl font-bold text-[#1a5d2c] font-telugu mb-2">
+                🚁 డ్రోన్ బుకింగ్ (Drone Booking)
+              </h2>
+              <p className="text-gray-500">
+                Book advanced drone spraying services for your crops.
+              </p>
+            </div>
+          </div>
+
+          {/* Success Message */}
+          <AnimatePresence>
+            {bookingSuccess && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-green-50 border border-green-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm"
+              >
+                <div className="bg-green-100 p-3 rounded-full">
+                  <CheckCircle2 className="h-8 w-8 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-green-800 font-telugu">బుకింగ్ విజయవంతమైంది!</h3>
+                  <p className="text-green-700">Your drone service has been booked successfully.</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left Panel - Booking Form */}
+            <div className="lg:col-span-2 space-y-6">
+              <Card className="border-0 shadow-sm rounded-[2rem] bg-white overflow-hidden">
+                <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-6">
+                  <CardTitle className="text-xl font-bold text-gray-800 font-telugu flex items-center gap-2">
+                    <Leaf className="h-5 w-5 text-[#4ade80]" />
+                    వివరాలు నమోదు చేయండి (Enter Details)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <form onSubmit={handleSubmit} className="space-y-8">
+                    {/* Crop Selection */}
+                    <div className="space-y-4">
+                      <Label className="text-lg font-medium text-gray-700 font-telugu">పంట రకం (Crop Type)</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {cropTypes.map((crop) => (
+                          <div
+                            key={crop.id}
+                            onClick={() => handleFieldChange('crop_type', crop.id)}
+                            className={`cursor-pointer rounded-2xl p-4 border-2 transition-all duration-200 flex flex-col items-center justify-center gap-3 h-32 ${currentBooking.crop_type === crop.id
+                                ? 'border-[#4ade80] bg-green-50 shadow-md scale-105'
+                                : 'border-gray-100 hover:border-green-200 hover:bg-gray-50'
+                              }`}
+                          >
+                            <span className="text-4xl">{crop.icon}</span>
+                            <span className={`font-bold font-telugu ${currentBooking.crop_type === crop.id ? 'text-[#1a5d2c]' : 'text-gray-600'}`}>
+                              {crop.nameTe}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                      {/* Acres Input */}
+                      <div className="space-y-4">
+                        <Label className="text-lg font-medium text-gray-700 font-telugu">ఎకరాలు (Acres)</Label>
+                        <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-2xl border border-gray-200">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="h-12 w-12 rounded-xl hover:bg-white hover:shadow-sm text-2xl font-bold text-gray-500"
+                            onClick={() => handleFieldChange('acres', Math.max(1, currentBooking.acres - 1))}
+                          >
+                            -
+                          </Button>
+                          <Input
+                            type="number"
+                            min="1"
+                            value={currentBooking.acres}
+                            onChange={(e) => handleFieldChange('acres', parseInt(e.target.value) || 1)}
+                            className="text-center text-2xl font-bold h-12 border-none bg-transparent focus-visible:ring-0 shadow-none"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="h-12 w-12 rounded-xl hover:bg-white hover:shadow-sm text-2xl font-bold text-gray-500"
+                            onClick={() => handleFieldChange('acres', currentBooking.acres + 1)}
+                          >
+                            +
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Date Input */}
+                      <div className="space-y-4">
+                        <Label className="text-lg font-medium text-gray-700 font-telugu">తేదీ (Date)</Label>
+                        <div className="relative">
+                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                          <Input
+                            type="date"
+                            value={currentBooking.service_date}
+                            onChange={(e) => handleFieldChange('service_date', e.target.value)}
+                            min={new Date().toISOString().split('T')[0]}
+                            className="pl-12 h-16 text-lg rounded-2xl border-gray-200 bg-gray-50 focus-visible:ring-[#4ade80]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full h-16 text-xl bg-[#1a5d2c] hover:bg-[#144a22] text-white font-bold rounded-2xl shadow-lg shadow-green-900/20 transition-all hover:scale-[1.01] font-telugu"
+                    >
+                      {loading ? (
+                        <span className="flex items-center gap-2">
+                          <Plane className="animate-pulse" /> ప్రాసెస్ చేస్తోంది...
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <Plane /> బుకింగ్ నిర్ధారించండి (Confirm Booking)
+                        </span>
+                      )}
+                    </Button>
+                  </form>
                 </CardContent>
               </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {/* Booking Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="lg:col-span-2"
-          >
-            <Card className="glass border-primary/10 shadow-lg">
-              <CardHeader>
-                <CardTitle className="font-telugu text-2xl text-primary">కొత్త బుకింగ్</CardTitle>
-                <CardDescription className="font-poppins">
-                  Fill in the details to book drone spraying service
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  {/* Crop Type Selection */}
-                  <div className="space-y-3">
-                    <Label className="font-telugu text-lg">పంట రకం ఎంచుకోండి:</Label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                      {cropTypes.map((crop) => (
-                        <Button
-                          key={crop.id}
-                          type="button"
-                          variant={currentBooking.crop_type === crop.id ? 'default' : 'outline'}
-                          className={`h-24 transition-all duration-300 ${currentBooking.crop_type === crop.id
-                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105 ring-2 ring-primary ring-offset-2'
-                            : 'hover:bg-primary/5 hover:text-primary border-primary/20 glass'
-                            }`}
-                          onClick={() => handleFieldChange('crop_type', crop.id)}
-                        >
-                          <div className="text-center">
-                            <div className="text-3xl mb-2 drop-shadow-sm">{crop.icon}</div>
-                            <div className="font-telugu font-bold">{crop.nameTe}</div>
-                          </div>
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
+            {/* Right Panel - Summary */}
+            <div className="space-y-6">
+              <Card className="border-0 shadow-sm rounded-[2rem] bg-[#1a5d2c] text-white overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none"></div>
 
-                  <div className="grid md:grid-cols-2 gap-8">
-                    {/* Acres Input */}
-                    <div className="space-y-3">
-                      <Label htmlFor="acres" className="font-telugu text-lg">
-                        ఎకరాల సంఖ్య:
-                      </Label>
-                      <div className="flex items-center gap-4 bg-white/50 p-2 rounded-xl border border-primary/10">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="h-12 w-12 rounded-lg border-primary/20 hover:bg-primary/10 hover:text-primary"
-                          onClick={() => handleFieldChange('acres', Math.max(1, currentBooking.acres - 1))}
-                        >
-                          -
-                        </Button>
-                        <Input
-                          id="acres"
-                          type="number"
-                          min="1"
-                          value={currentBooking.acres}
-                          onChange={(e) => handleFieldChange('acres', parseInt(e.target.value) || 1)}
-                          className="text-center text-2xl font-bold h-12 border-none bg-transparent focus-visible:ring-0 font-poppins"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="h-12 w-12 rounded-lg border-primary/20 hover:bg-primary/10 hover:text-primary"
-                          onClick={() => handleFieldChange('acres', currentBooking.acres + 1)}
-                        >
-                          +
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Service Date */}
-                    <div className="space-y-3">
-                      <Label htmlFor="service_date" className="font-telugu text-lg">
-                        సేవ తేదీ:
-                      </Label>
-                      <div className="relative">
-                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input
-                          id="service_date"
-                          type="date"
-                          value={currentBooking.service_date}
-                          onChange={(e) => handleFieldChange('service_date', e.target.value)}
-                          min={new Date().toISOString().split('T')[0]}
-                          className="pl-12 h-14 font-poppins text-lg glass border-primary/20 focus-visible:ring-primary/30"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full h-16 text-xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-telugu shadow-lg shadow-primary/25 rounded-xl transition-all hover:scale-[1.02]"
-                  >
-                    <Plane className={`mr-3 h-6 w-6 ${loading ? 'animate-pulse' : ''}`} />
-                    {loading ? 'బుకింగ్ చేస్తోంది...' : 'బుకింగ్ ధృవీకరించండి'}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Booking Summary */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="space-y-6"
-          >
-            <Card className="glass border-primary/10 shadow-lg sticky top-24">
-              <CardHeader className="bg-primary/5 border-b border-primary/10">
-                <CardTitle className="font-telugu text-primary flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5" />
-                  బుకింగ్ సారాంశం
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6 pt-6">
-                {selectedCrop ? (
-                  <div className="flex items-center justify-between p-4 bg-white/50 rounded-xl border border-primary/5">
-                    <span className="text-sm text-muted-foreground font-telugu">పంట (Crop):</span>
-                    <span className="font-bold font-poppins text-lg flex items-center gap-2">
-                      <span className="text-2xl">{selectedCrop.icon}</span> {selectedCrop.nameTe}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="text-center p-4 text-muted-foreground font-telugu bg-white/50 rounded-xl border border-dashed border-primary/20">
-                    పంటను ఎంచుకోండి
-                  </div>
-                )}
-
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground font-telugu">ఎకరాలు (Acres):</span>
-                    <span className="font-bold text-foreground font-poppins">
-                      {currentBooking.acres} acres
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground font-telugu">ధర/ఎకరం (Rate):</span>
-                    <span className="font-medium font-poppins">
-                      ₹{currentBooking.rate_per_acre.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-
-                  <div className="pt-4 border-t border-primary/10">
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-primary font-telugu">
-                        మొత్తం ధర:
+                <CardHeader className="border-b border-white/10 pb-6 relative z-10">
+                  <CardTitle className="text-xl font-bold flex items-center gap-2 font-telugu">
+                    <ShieldCheck className="h-6 w-6 text-[#4ade80]" />
+                    బుకింగ్ సారాంశం
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 space-y-6 relative z-10">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70 font-telugu">ఎంచుకున్న పంట</span>
+                      <span className="font-bold text-lg flex items-center gap-2">
+                        {selectedCrop ? (
+                          <><span className="text-2xl">{selectedCrop.icon}</span> {selectedCrop.nameTe}</>
+                        ) : (
+                          <span className="text-white/50 text-sm">ఎంచుకోలేదు</span>
+                        )}
                       </span>
-                      <span className="text-3xl font-bold text-primary font-poppins">
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70 font-telugu">విస్తీర్ణం</span>
+                      <span className="font-bold text-lg">{currentBooking.acres} ఎకరాలు</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70 font-telugu">ధర / ఎకరం</span>
+                      <span className="font-bold text-lg">₹{currentBooking.rate_per_acre}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-6 border-t border-white/10">
+                    <div className="flex justify-between items-end">
+                      <span className="text-white/90 font-bold font-telugu text-lg">మొత్తం చెల్లించాల్సినది</span>
+                      <span className="text-4xl font-bold text-[#4ade80]">
                         ₹{currentBooking.total_cost.toLocaleString('en-IN')}
                       </span>
                     </div>
                   </div>
-                </div>
+                </CardContent>
+              </Card>
 
-                <div className="bg-accent/10 p-4 rounded-xl space-y-2 text-xs text-accent-foreground font-telugu border border-accent/20">
-                  <p className="flex items-center gap-2"><CheckCircle2 className="h-3 w-3" /> ప్రొఫెషనల్ డ్రోన్ ఆపరేటర్</p>
-                  <p className="flex items-center gap-2"><CheckCircle2 className="h-3 w-3" /> అధునాతన స్ప్రేయింగ్ పరికరాలు</p>
-                  <p className="flex items-center gap-2"><CheckCircle2 className="h-3 w-3" /> పర్యావరణ అనుకూల రసాయనాలు</p>
-                  <p className="flex items-center gap-2"><CheckCircle2 className="h-3 w-3" /> 24/7 కస్టమర్ మద్దతు</p>
+              {/* Features List */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-2">
+                  <div className="bg-blue-50 p-3 rounded-full">
+                    <Droplets className="h-6 w-6 text-blue-500" />
+                  </div>
+                  <span className="text-xs font-bold text-gray-600 font-telugu">సమర్థవంతమైన స్ప్రేయింగ్</span>
                 </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Booking History */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="max-w-7xl mx-auto mt-12"
-        >
-          <Card className="glass border-primary/10 shadow-lg overflow-hidden">
-            <CardHeader className="bg-primary/5 border-b border-primary/10">
-              <div className="flex items-center justify-between">
-                <CardTitle className="font-telugu text-xl flex items-center gap-2">
-                  <History className="h-5 w-5 text-primary" />
-                  బుకింగ్ చరిత్ర
-                </CardTitle>
-                <Button
-                  variant="ghost"
-                  onClick={() => setShowHistory(!showHistory)}
-                  className="font-poppins hover:bg-primary/10 hover:text-primary"
-                >
-                  {showHistory ? 'Hide' : 'Show'} History
-                </Button>
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-2">
+                  <div className="bg-orange-50 p-3 rounded-full">
+                    <Wind className="h-6 w-6 text-orange-500" />
+                  </div>
+                  <span className="text-xs font-bold text-gray-600 font-telugu">వేగవంతమైన సేవ</span>
+                </div>
               </div>
-            </CardHeader>
+            </div>
+          </div>
+
+          {/* History Section */}
+          <div className="pt-8 border-t border-gray-200">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-gray-800 font-telugu flex items-center gap-2">
+                <History className="h-6 w-6 text-gray-400" />
+                నా బుకింగ్స్ (My Bookings)
+              </h3>
+              <Button
+                variant="outline"
+                onClick={() => setShowHistory(!showHistory)}
+                className="rounded-full border-gray-200"
+              >
+                {showHistory ? 'Hide' : 'Show'} History
+              </Button>
+            </div>
+
             <AnimatePresence>
               {showHistory && (
                 <motion.div
@@ -345,55 +328,49 @@ const DroneBookingPage = () => {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <CardContent className="p-6">
-                    {bookings.length === 0 ? (
-                      <div className="text-center py-12 bg-white/50 rounded-xl border border-dashed border-primary/20">
-                        <p className="text-xl text-muted-foreground font-telugu mb-2">
-                          ఇంకా బుకింగ్‌లు లేవు
-                        </p>
-                        <p className="text-sm text-muted-foreground/80 font-poppins">
-                          No bookings found yet
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {bookings.map((booking) => (
-                          <Card key={booking.id} className="bg-white/50 hover:bg-white/80 transition-colors border-primary/10">
-                            <CardContent className="p-4">
-                              <div className="flex items-start justify-between mb-3">
-                                <Badge variant="outline" className="bg-primary/5 border-primary/20 font-poppins">
-                                  {booking.crop_type.charAt(0).toUpperCase() + booking.crop_type.slice(1)}
-                                </Badge>
-                                {getStatusBadge(booking.booking_status)}
-                              </div>
+                  {bookings.length === 0 ? (
+                    <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-gray-200">
+                      <p className="text-gray-400 font-telugu">ఇంకా బుకింగ్‌లు లేవు (No bookings yet)</p>
+                    </div>
+                  ) : (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {bookings.map((booking) => (
+                        <Card key={booking.id} className="border-0 shadow-sm rounded-3xl bg-white hover:shadow-md transition-all">
+                          <CardContent className="p-6 space-y-4">
+                            <div className="flex justify-between items-start">
+                              <Badge variant="secondary" className="bg-gray-100 text-gray-700 font-bold">
+                                {booking.crop_type.toUpperCase()}
+                              </Badge>
+                              {getStatusBadge(booking.booking_status)}
+                            </div>
 
-                              <div className="space-y-2">
-                                <div className="flex items-center text-sm text-muted-foreground font-poppins">
-                                  <MapPin className="h-4 w-4 mr-2 text-primary/60" />
-                                  {booking.acres} acres
-                                </div>
-                                <div className="flex items-center text-sm text-muted-foreground font-poppins">
-                                  <Calendar className="h-4 w-4 mr-2 text-primary/60" />
-                                  {new Date(booking.service_date).toLocaleDateString()}
-                                </div>
-                                <div className="pt-2 mt-2 border-t border-primary/5 flex items-center justify-between">
-                                  <span className="text-xs text-muted-foreground font-telugu">మొత్తం:</span>
-                                  <span className="font-bold text-primary font-poppins">
-                                    ₹{booking.total_cost.toLocaleString('en-IN')}
-                                  </span>
-                                </div>
+                            <div className="space-y-2 text-sm text-gray-600">
+                              <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4 text-gray-400" />
+                                {booking.acres} Acres
                               </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-gray-400" />
+                                {new Date(booking.service_date).toLocaleDateString()}
+                              </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
+                              <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">Total Cost</span>
+                              <span className="text-xl font-bold text-[#1a5d2c]">
+                                ₹{booking.total_cost.toLocaleString('en-IN')}
+                              </span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
-          </Card>
-        </motion.div>
+          </div>
+        </div>
       </main>
     </div>
   );

@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Header } from '@/components/layout/Header';
-import { Sprout, ArrowLeft, Search, Volume2 } from 'lucide-react';
-import SeedCard from '@/components/seeds/SeedCard';
-import SeedDetailModal from '@/components/seeds/SeedDetailModal';
-import { fetchSeeds, setSelectedSeed, clearSelectedSeed, filterSeeds } from '@/store/slices/seedsSlice';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ArrowLeft, Search, Sprout, MapPin, ShoppingCart } from 'lucide-react';
+import { fetchSeeds, filterSeeds, setSelectedSeed, clearSelectedSeed } from '@/store/slices/seedsSlice';
+import SeedDetailModal from '@/components/seeds/SeedDetailModal';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SeedVarietiesPage = () => {
@@ -39,142 +39,146 @@ const SeedVarietiesPage = () => {
     }, 300);
   };
 
-  const handleBuy = (seed) => {
-    dispatch(setSelectedSeed(seed));
-    setIsModalOpen(true);
-  };
-
   const handleOrder = ({ seed, quantity }) => {
     console.log('Order placed:', { seed, quantity });
-    // TODO: Implement order functionality with Supabase
+    // Placeholder for order logic
     alert(`Order placed for ${quantity} kg of ${seed.variety_name_te}`);
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <Header />
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Page Title */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex items-center justify-between"
-        >
-          <div>
-            <h2 className="text-3xl font-bold text-gradient font-telugu mb-2">
-              🌱 విత్తన రకాలు
-            </h2>
-            <p className="text-muted-foreground font-poppins">
-              Seed Varieties
-            </p>
+    <div className="min-h-screen bg-gray-50 font-poppins flex flex-col">
+      {/* Header */}
+      <header className="bg-white px-8 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-[#4ade80] rounded-full flex items-center justify-center shadow-sm">
+            <span className="text-xl font-bold text-white">C</span>
           </div>
-          <Button variant="outline" onClick={() => navigate('/dashboard')} className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Dashboard
-          </Button>
-        </motion.div>
+          <h1 className="text-2xl font-bold text-[#1a5d2c] tracking-tight">CarbonMint</h1>
+        </div>
 
-        {/* Search and Audio */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-8 flex flex-col md:flex-row gap-4 max-w-4xl mx-auto"
-        >
-          <div className="flex-1 relative group">
-            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <Input
-              placeholder="విత్తనాలను శోధించండి: పంట పేరు లేదా రకం ద్వారా వెతకండి"
-              className="pl-12 h-14 font-telugu text-lg glass border-primary/20 focus-visible:ring-primary/30 rounded-full shadow-sm"
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          </div>
-          <Button className="h-14 px-8 bg-accent hover:bg-accent/90 text-white font-telugu rounded-full shadow-lg shadow-accent/20 transition-all hover:scale-105">
-            <Volume2 className="mr-2 h-5 w-5" />
-            విత్తన సమాచారం వినండి
-          </Button>
-        </motion.div>
-
-        {/* Results Count */}
-        {!loading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mb-6 text-center"
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={() => navigate('/dashboard')}
+            className="bg-[#4ade80] hover:bg-[#22c55e] text-white font-bold font-telugu"
           >
-            <p className="text-sm text-muted-foreground font-poppins bg-primary/5 inline-block px-4 py-1 rounded-full">
-              Showing {filteredSeeds.length} seed {filteredSeeds.length === 1 ? 'variety' : 'varieties'}
-            </p>
-          </motion.div>
-        )}
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            డాష్‌బోర్డ్ (Dashboard)
+          </Button>
+        </div>
+      </header>
 
-        {/* Seed Cards Grid */}
-        <AnimatePresence mode="wait">
-          {loading ? (
-            <motion.div
-              key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="space-y-3 glass p-4 rounded-xl">
-                  <Skeleton className="h-48 w-full rounded-lg" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-10 w-full rounded-lg" />
-                </div>
-              ))}
-            </motion.div>
-          ) : filteredSeeds.length === 0 ? (
-            <motion.div
-              key="empty"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="text-center py-16 glass rounded-2xl max-w-2xl mx-auto"
-            >
-              <div className="text-8xl mb-6 animate-bounce">🌱</div>
-              <h3 className="text-2xl font-bold text-primary font-telugu mb-2">
-                విత్తనాలు కనుగొనబడలేదు
-              </h3>
-              <p className="text-muted-foreground font-poppins mb-6">
-                No seeds found for your search query "{searchQuery}"
+      <main className="flex-1 p-8 overflow-y-auto">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Title & Search Section */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h2 className="text-3xl font-bold text-[#1a5d2c] font-telugu mb-2">
+                🌱 విత్తన రకాలు (Seed Varieties)
+              </h2>
+              <p className="text-gray-500">
+                Explore high-quality seeds for your farm.
               </p>
-              <Button
-                variant="outline"
-                onClick={() => handleSearch('')}
-                className="font-poppins border-primary/20 hover:bg-primary/5"
+            </div>
+
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Search seeds..."
+                className="pl-12 h-12 rounded-full border-gray-200 bg-white shadow-sm focus-visible:ring-[#4ade80]"
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Content Grid */}
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-[2rem] p-4 space-y-4 shadow-sm">
+                    <Skeleton className="h-48 w-full rounded-3xl" />
+                    <div className="space-y-2 px-2">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredSeeds.length === 0 ? (
+              <div className="text-center py-20 bg-white rounded-[2rem] shadow-sm">
+                <Sprout className="h-20 w-20 text-gray-200 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-600">No seeds found</h3>
+                <p className="text-gray-400">Try adjusting your search terms.</p>
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
               >
-                Clear Search
-              </Button>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="grid"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {filteredSeeds.map((seed, index) => (
-                <motion.div
-                  key={seed.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <SeedCard
-                    seed={seed}
-                    onViewDetails={handleViewDetails}
-                    onBuy={handleBuy}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+                {filteredSeeds.map((seed, index) => (
+                  <motion.div
+                    key={seed.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <Card className="group h-full rounded-[2rem] border-0 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden bg-white flex flex-col">
+                      {/* Image Section */}
+                      <div className="relative h-56 overflow-hidden bg-gray-100">
+                        {seed.image_url ? (
+                          <img
+                            src={seed.image_url}
+                            alt={seed.variety_name_te}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-green-50">
+                            <Sprout className="h-16 w-16 text-green-200" />
+                          </div>
+                        )}
+                        <div className="absolute top-4 right-4">
+                          <Badge className="bg-white/90 text-[#1a5d2c] hover:bg-white font-bold backdrop-blur-sm shadow-sm">
+                            {seed.crop_name}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      {/* Content Section */}
+                      <CardContent className="p-6 flex-1 flex flex-col">
+                        <div className="mb-4">
+                          <h3 className="text-xl font-bold text-gray-800 font-telugu mb-1">
+                            {seed.variety_name_te}
+                          </h3>
+                          <p className="text-sm text-gray-500 font-medium">
+                            {seed.variety_name_en}
+                          </p>
+                        </div>
+
+                        <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-100">
+                          <div>
+                            <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">Price</p>
+                            <p className="text-lg font-bold text-[#1a5d2c]">
+                              ₹{seed.price?.toLocaleString('en-IN') || 'N/A'}
+                            </p>
+                          </div>
+                          <Button
+                            onClick={() => handleViewDetails(seed)}
+                            className="rounded-full bg-[#1a5d2c] hover:bg-[#144a22] text-white px-6"
+                          >
+                            View Details
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </main>
 
       {/* Seed Detail Modal */}

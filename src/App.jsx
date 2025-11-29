@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { checkSession } from './store/slices/authSlice';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import MarketPricesPage from './pages/MarketPricesPage';
@@ -18,7 +19,12 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
+
+  React.useEffect(() => {
+    dispatch(checkSession());
+  }, [dispatch]);
 
   return (
     <Router>

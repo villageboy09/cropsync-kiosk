@@ -13,8 +13,7 @@ export const fetchProducts = createAsyncThunk(
           advertisers (
             advertiser_name,
             contact_number,
-            email,
-            address
+            email_address
           )
         `)
         .order('created_at', { ascending: false });
@@ -39,8 +38,7 @@ export const fetchProductsByCategory = createAsyncThunk(
           advertisers (
             advertiser_name,
             contact_number,
-            email,
-            address
+            email_address
           )
         `)
         .order('created_at', { ascending: false });
@@ -71,8 +69,7 @@ export const searchProducts = createAsyncThunk(
           advertisers (
             advertiser_name,
             contact_number,
-            email,
-            address
+            email_address
           )
         `)
         .or(`product_name_te.ilike.%${query}%,product_name_en.ilike.%${query}%,category.ilike.%${query}%`)
