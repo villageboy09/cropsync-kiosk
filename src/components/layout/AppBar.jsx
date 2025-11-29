@@ -1,4 +1,3 @@
-```
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { LayoutDashboard } from 'lucide-react';
@@ -11,7 +10,7 @@ const AppBar = () => {
   const isDashboard = location.pathname === '/dashboard';
 
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className="h-20 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-50 bg-white/30 backdrop-blur-md border-b border-white/20 shadow-sm rounded-b-3xl mx-4 mt-2"
@@ -29,7 +28,7 @@ const AppBar = () => {
 
       {/* Right Section - Dashboard Button */}
       {!isDashboard && (
-        <Button 
+        <Button
           onClick={() => navigate('/dashboard')}
           className="bg-white/50 hover:bg-white/80 text-foreground border-0 shadow-sm backdrop-blur-sm gap-2 rounded-xl h-10 px-4 transition-all duration-300 hover:scale-105"
         >
@@ -42,4 +41,3 @@ const AppBar = () => {
 };
 
 export default AppBar;
-```

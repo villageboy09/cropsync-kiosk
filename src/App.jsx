@@ -24,11 +24,11 @@ function App() {
     <Router>
       <Routes>
         {/* Public Route */}
-        <Route 
-          path="/" 
-          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />} 
+        <Route
+          path="/"
+          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />}
         />
-        
+
         {/* Protected Dashboard */}
         <Route
           path="/dashboard"
@@ -38,55 +38,55 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
-        {/* Placeholder routes for features - will be implemented next */}
-        <Route 
-          path="/weather" 
+
+        {/* Feature Routes */}
+        <Route
+          path="/weather"
           element={
             <ProtectedRoute>
               <WeatherPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/crop-advisory" 
+        <Route
+          path="/crop-advisory"
           element={
             <ProtectedRoute>
               <CropAdvisoryPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/seeds" 
+        <Route
+          path="/seeds"
           element={
             <ProtectedRoute>
               <SeedVarietiesPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/products" 
+        <Route
+          path="/products"
           element={
             <ProtectedRoute>
               <ProductsPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/market-prices" 
+        <Route
+          path="/market-prices"
           element={
             <ProtectedRoute>
               <MarketPricesPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/drone-booking" 
+        <Route
+          path="/drone-booking"
           element={
             <ProtectedRoute>
               <DroneBookingPage />
             </ProtectedRoute>
-          } 
+          }
         />
 
         {/* Catch all */}

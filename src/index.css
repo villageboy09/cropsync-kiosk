@@ -7,6 +7,10 @@
 @theme {
   /* Font families */
   --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+
+  --background: 150 50% 5%;
+  --foreground: 150 20% 98%;
+
   --card: 150 50% 8%;
   --card-foreground: 150 20% 98%;
 

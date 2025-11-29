@@ -2,6 +2,18 @@ import React from 'react';
 import { ArrowLeft, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const Key = ({ children, onClick, className, disabled }) => (
+  <motion.button
+    whileTap={{ scale: 0.75, backgroundColor: "rgba(0,0,0,0.1)" }}
+    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+    onClick={onClick}
+    disabled={disabled}
+    className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl font-medium text-zinc-900 outline-none select-none ${className}`}
+  >
+    {children}
+  </motion.button>
+);
+
 const CredKeyboard = ({ onKeyPress, onClear, onBackspace, onLogin, disabled }) => {
   const teluguNumbers = {
     '0': 'సున్నా', '1': 'ఒకటి', '2': 'రెండు', '3': 'మూడు', '4': 'నాలుగు',
@@ -22,36 +34,24 @@ const CredKeyboard = ({ onKeyPress, onClear, onBackspace, onLogin, disabled }) =
     onKeyPress(num);
   };
 
-  const Key = ({ children, onClick, className }) => (
-    <motion.button
-      whileTap={{ scale: 0.75, backgroundColor: "rgba(0,0,0,0.1)" }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-      onClick={onClick}
-      disabled={disabled}
-      className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl font-medium text-zinc-900 outline-none select-none ${className}`}
-    >
-      {children}
-    </motion.button>
-  );
-
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="grid grid-cols-3 gap-x-8 gap-y-4">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-          <Key key={num} onClick={() => handlePress(num.toString())}>
+          <Key key={num} onClick={() => handlePress(num.toString())} disabled={disabled}>
             {num}
           </Key>
         ))}
 
-        <Key onClick={onClear} className="text-sm font-bold tracking-widest text-zinc-400 uppercase">
+        <Key onClick={onClear} className="text-sm font-bold tracking-widest text-zinc-400 uppercase" disabled={disabled}>
           Clear
         </Key>
 
-        <Key onClick={() => handlePress('0')}>
+        <Key onClick={() => handlePress('0')} disabled={disabled}>
           0
         </Key>
 
-        <Key onClick={onBackspace}>
+        <Key onClick={onBackspace} disabled={disabled}>
           <ArrowLeft className="w-6 h-6 text-zinc-400" />
         </Key>
       </div>
