@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Header } from '@/components/layout/Header';
+import AppBar from '@/components/layout/AppBar';
+import BottomBar from '@/components/layout/BottomBar';
 import DashboardCard from '@/components/layout/DashboardCard';
 import { dashboardImages } from '@/lib/images';
 import { motion } from 'framer-motion';
@@ -75,47 +76,51 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
+      <AppBar />
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 pb-20">
-        {/* Welcome Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-10 text-center space-y-2"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold font-telugu text-gradient mb-3">
-            స్వాగతం, {user?.user_metadata?.full_name || 'రైతు'}!
-          </h2>
-          <p className="text-xl text-muted-foreground font-poppins">
-            Welcome, {user?.user_metadata?.full_name || 'Farmer'}!
-          </p>
-        </motion.div>
+      {/* Main Content - Scrollable */}
+      <main className="flex-1 overflow-y-auto p-6 md:p-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Welcome Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-1"
+          >
+            <h2 className="text-3xl font-bold tracking-tight">
+              Dashboard
+            </h2>
+            <p className="text-muted-foreground">
+              Welcome back to your farming command center.
+            </p>
+          </motion.div>
 
-        {/* Feature Cards Grid */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
-        >
-          {features.map((feature, index) => (
-            <DashboardCard
-              key={feature.id}
-              index={index}
-              title={feature.title}
-              titleTe={feature.titleTe}
-              image={feature.image}
-              route={feature.route}
-              borderColor={feature.borderColor}
-              onAudioPlay={() => handleAudioPlay(feature.titleTe)}
-            />
-          ))}
-        </motion.div>
+          {/* Feature Cards Grid */}
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {features.map((feature, index) => (
+              <DashboardCard
+                key={feature.id}
+                index={index}
+                title={feature.title}
+                titleTe={feature.titleTe}
+                image={feature.image}
+                route={feature.route}
+                borderColor={feature.borderColor}
+                onAudioPlay={() => handleAudioPlay(feature.titleTe)}
+              />
+            ))}
+          </motion.div>
+        </div>
       </main>
+
+      <BottomBar />
     </div>
   );
 };

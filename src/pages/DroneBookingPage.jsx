@@ -165,8 +165,8 @@ const DroneBookingPage = () => {
                           type="button"
                           variant={currentBooking.crop_type === crop.id ? 'default' : 'outline'}
                           className={`h-24 transition-all duration-300 ${currentBooking.crop_type === crop.id
-                              ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105 ring-2 ring-primary ring-offset-2'
-                              : 'hover:bg-primary/5 hover:text-primary border-primary/20 glass'
+                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105 ring-2 ring-primary ring-offset-2'
+                            : 'hover:bg-primary/5 hover:text-primary border-primary/20 glass'
                             }`}
                           onClick={() => handleFieldChange('crop_type', crop.id)}
                         >

@@ -141,8 +141,8 @@ const ProductsPage = () => {
               <Button
                 variant={selectedCategory === 'all' ? 'default' : 'outline'}
                 className={`whitespace-nowrap font-telugu rounded-full px-6 transition-all ${selectedCategory === 'all'
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
-                    : 'hover:bg-primary/10 hover:text-primary border-primary/20'
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
+                  : 'hover:bg-primary/10 hover:text-primary border-primary/20'
                   }`}
                 onClick={() => handleCategoryChange('all')}
               >
@@ -153,8 +153,8 @@ const ProductsPage = () => {
                   key={category}
                   variant={selectedCategory === category ? 'default' : 'outline'}
                   className={`whitespace-nowrap font-poppins rounded-full px-6 transition-all ${selectedCategory === category
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
-                      : 'hover:bg-primary/10 hover:text-primary border-primary/20'
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
+                    : 'hover:bg-primary/10 hover:text-primary border-primary/20'
                     }`}
                   onClick={() => handleCategoryChange(category)}
                 >

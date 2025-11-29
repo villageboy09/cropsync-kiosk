@@ -1,57 +1,73 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Delete, X } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const NumericKeyboard = ({ onKeyPress, onClear, onBackspace, onLogin, disabled }) => {
-  const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+const CredKeyboard = ({ onKeyPress, onClear, onBackspace, onLogin, disabled }) => {
+  const teluguNumbers = {
+    '0': 'సున్నా', '1': 'ఒకటి', '2': 'రెండు', '3': 'మూడు', '4': 'నాలుగు',
+    '5': 'ఐదు', '6': 'ఆరు', '7': 'ఏడు', '8': 'ఎనిమిది', '9': 'తొమ్మిది'
+  };
+
+  const speakNumber = (num) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(teluguNumbers[num]);
+      utterance.lang = 'te-IN';
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const handlePress = (num) => {
+    speakNumber(num);
+    onKeyPress(num);
+  };
+
+  const Key = ({ children, onClick, className }) => (
+    <motion.button
+      whileTap={{ scale: 0.75, backgroundColor: "rgba(0,0,0,0.1)" }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      onClick={onClick}
+      disabled={disabled}
+      className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl font-medium text-zinc-900 outline-none select-none ${className}`}
+    >
+      {children}
+    </motion.button>
+  );
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-4">
-      {/* Number Grid */}
-      <div className="grid grid-cols-3 gap-3">
-        {numbers.map((num) => (
-          <Button
-            key={num}
-            onClick={() => onKeyPress(num)}
-            disabled={disabled}
-            className="h-16 text-2xl font-semibold bg-white text-gray-900 hover:bg-gray-100 border-2 border-gray-300 shadow-md"
-            variant="outline"
-          >
+    <div className="flex flex-col items-center gap-6">
+      <div className="grid grid-cols-3 gap-x-8 gap-y-4">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+          <Key key={num} onClick={() => handlePress(num.toString())}>
             {num}
-          </Button>
+          </Key>
         ))}
-      </div>
 
-      {/* Action Buttons */}
-      <div className="grid grid-cols-2 gap-3">
-        <Button
-          onClick={onClear}
-          disabled={disabled}
-          className="h-14 text-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white"
-        >
-          <X className="mr-2 h-5 w-5" />
+        <Key onClick={onClear} className="text-sm font-bold tracking-widest text-zinc-400 uppercase">
           Clear
-        </Button>
-        <Button
-          onClick={onBackspace}
-          disabled={disabled}
-          className="h-14 text-lg font-semibold bg-pink-500 hover:bg-pink-600 text-white"
-        >
-          <Delete className="mr-2 h-5 w-5" />
-          Backspace
-        </Button>
+        </Key>
+
+        <Key onClick={() => handlePress('0')}>
+          0
+        </Key>
+
+        <Key onClick={onBackspace}>
+          <ArrowLeft className="w-6 h-6 text-zinc-400" />
+        </Key>
       </div>
 
-      {/* Login Button */}
-      <Button
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={onLogin}
         disabled={disabled}
-        className="w-full h-16 text-xl font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg"
+        className="w-full max-w-[280px] mt-4 h-14 bg-zinc-900 text-white rounded-full font-medium text-lg shadow-lg shadow-zinc-200 flex items-center justify-center gap-2"
       >
-        లాగిన్ చేయండి (Login)
-      </Button>
+        <span>Login</span>
+        <span className="opacity-50 text-sm font-normal">(లాగిన్)</span>
+      </motion.button>
     </div>
   );
 };
 
-export default NumericKeyboard;
+export default CredKeyboard;

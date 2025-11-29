@@ -7,53 +7,6 @@
 @theme {
   /* Font families */
   --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
-  
-  /* Border radius */
-  --radius: 0.75rem;
-}
-
-/* Base styles */
-:root {
-  /* Primary - Deep Emerald Green */
-  --primary: 150 60% 25%;
-  --primary-foreground: 0 0% 100%;
-
-  /* Secondary - Vibrant Leaf Green */
-  --secondary: 142 70% 45%;
-  --secondary-foreground: 0 0% 100%;
-
-  /* Accent - Golden Harvest */
-  --accent: 35 90% 55%;
-  --accent-foreground: 0 0% 100%;
-
-  /* Backgrounds */
-  --background: 150 20% 98%; /* Very subtle green tint */
-  --foreground: 150 60% 10%;
-
-  /* Cards & Surfaces */
-  --card: 0 0% 100%;
-  --card-foreground: 150 60% 10%;
-  
-  --popover: 0 0% 100%;
-  --popover-foreground: 150 60% 10%;
-
-  /* UI Elements */
-  --muted: 150 20% 94%;
-  --muted-foreground: 150 10% 40%;
-
-  --border: 150 20% 90%;
-  --input: 150 20% 90%;
-  --ring: 142 70% 45%;
-
-  /* Status */
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-}
-
-.dark {
-  --background: 150 50% 5%;
-  --foreground: 150 20% 98%;
-
   --card: 150 50% 8%;
   --card-foreground: 150 20% 98%;
 
@@ -86,7 +39,7 @@ body {
   font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: 
+  background-image:
     radial-gradient(at 0% 0%, hsla(142, 70%, 45%, 0.05) 0px, transparent 50%),
     radial-gradient(at 100% 0%, hsla(35, 90%, 55%, 0.05) 0px, transparent 50%);
   background-attachment: fixed;
