@@ -5,8 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AlertCircle, Delete, Sprout, CloudSun, TrendingUp, Headphones, ArrowLeft } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
-import { setUser } from '@/store/slices/authSlice';
+import { signIn, setUser } from '@/store/slices/authSlice';
+import { authApi } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LoginPage = () => {
@@ -43,7 +43,7 @@ const LoginPage = () => {
   const handleLogin = async () => {
     console.log('Attempting login with:', inputId);
     if (inputId.length === 0) {
-      setError('దయచేసి మీ పిన్ నంబర్‌ను నమోదు చేయండి (Please enter your PIN)');
+      setError('దయచేసి మీ రైతు ఐడిని నమోదు చేయండి (Please enter your Farmer ID)');
       return;
     }
 
@@ -51,40 +51,18 @@ const LoginPage = () => {
     setError(null);
 
     try {
-      // Check if input is purely numeric
-      const isNumeric = /^\d+$/.test(inputId);
-      console.log('Is numeric:', isNumeric);
+      // Use the new MySQL API for login
+      const response = await authApi.login(inputId);
+      console.log('Login response:', response);
 
-      if (!isNumeric) {
-        setError('దయచేసి సరైన పిన్ నంబర్‌ను నమోదు చేయండి (Please enter a valid numeric PIN)');
-        setLoading(false);
-        return;
+      if (response.success && response.user) {
+        // Store user and update Redux state
+        authApi.storeUser(response.user);
+        dispatch(setUser(response.user));
+        navigate('/dashboard');
+      } else {
+        setError(response.message || 'చెల్లని ఐడి. దయచేసి మళ్లీ ప్రయత్నించండి (Invalid ID. Please try again.)');
       }
-
-      // Query specifically for login_pin based on the provided schema
-      const { data: farmer, error: dbError } = await supabase
-        .from('farmers')
-        .select('*')
-        .eq('login_pin', inputId)
-        .single();
-
-      if (dbError) {
-        console.error('DB Error:', dbError);
-        // Handle specific error codes if needed, e.g., PGRST116 (0 rows)
-        if (dbError.code !== 'PGRST116') {
-          console.error('Unexpected DB Error:', dbError.message);
-        }
-      }
-
-      if (farmer) console.log('Farmer found:', farmer);
-
-      if (dbError || !farmer) {
-        setError('చెల్లని పిన్. దయచేసి మళ్లీ ప్రయత్నించండి (Invalid PIN. Please try again.)');
-        return;
-      }
-
-      dispatch(setUser(farmer));
-      navigate('/dashboard');
     } catch (err) {
       setError('లాగిన్ విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి (Login failed. Please try again.)');
       console.error('Login error:', err);

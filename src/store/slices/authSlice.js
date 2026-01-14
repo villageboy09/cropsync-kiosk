@@ -1,46 +1,57 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { supabase } from '@/lib/supabase';
+import { authApi } from '@/lib/api';
 
 const initialState = {
-  user: null,
+  user: authApi.getStoredUser(),
   session: null,
   loading: false,
   error: null,
-  isAuthenticated: false,
+  isAuthenticated: authApi.isAuthenticated(),
 };
 
 // Async thunks for authentication
 export const signIn = createAsyncThunk(
   'auth/signIn',
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ userId }, { rejectWithValue }) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      return data;
+      const response = await authApi.login(userId);
+      
+      if (!response.success) {
+        return rejectWithValue(response.message);
+      }
+      
+      // Store user in localStorage
+      authApi.storeUser(response.user);
+      
+      return {
+        user: response.user,
+        token: response.token,
+      };
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message || 'Login failed');
     }
   }
 );
 
-export const signUp = createAsyncThunk(
-  'auth/signUp',
-  async ({ email, password, metadata }, { rejectWithValue }) => {
+export const signInByCard = createAsyncThunk(
+  'auth/signInByCard',
+  async ({ cardUid }, { rejectWithValue }) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: metadata,
-        },
-      });
-      if (error) throw error;
-      return data;
+      const response = await authApi.loginByCard(cardUid);
+      
+      if (!response.success) {
+        return rejectWithValue(response.message);
+      }
+      
+      // Store user in localStorage
+      authApi.storeUser(response.user);
+      
+      return {
+        user: response.user,
+        token: response.token,
+      };
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message || 'Card login failed');
     }
   }
 );
@@ -49,8 +60,7 @@ export const signOut = createAsyncThunk(
   'auth/signOut',
   async (_, { rejectWithValue }) => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      authApi.logout();
       return null;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -62,9 +72,26 @@ export const checkSession = createAsyncThunk(
   'auth/checkSession',
   async (_, { rejectWithValue }) => {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      return session;
+      // Check if we have a stored user and valid token
+      const storedUser = authApi.getStoredUser();
+      
+      if (!storedUser) {
+        return null;
+      }
+      
+      // Verify token with backend
+      const tokenResult = await authApi.verifyToken();
+      
+      if (tokenResult.valid) {
+        return {
+          user: storedUser,
+          isValid: true,
+        };
+      } else {
+        // Token invalid, clear storage
+        authApi.logout();
+        return null;
+      }
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -78,6 +105,9 @@ const authSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = !!action.payload;
+      if (action.payload) {
+        authApi.storeUser(action.payload);
+      }
     },
     setSession: (state, action) => {
       state.session = action.payload;
@@ -91,6 +121,7 @@ const authSlice = createSlice({
       state.session = null;
       state.isAuthenticated = false;
       state.error = null;
+      authApi.logout();
     },
   },
   extraReducers: (builder) => {
@@ -103,7 +134,7 @@ const authSlice = createSlice({
       .addCase(signIn.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.session = action.payload.session;
+        state.session = { token: action.payload.token };
         state.isAuthenticated = true;
         state.error = null;
       })
@@ -112,21 +143,22 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.isAuthenticated = false;
       })
-      // Sign Up
-      .addCase(signUp.pending, (state) => {
+      // Sign In By Card
+      .addCase(signInByCard.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(signUp.fulfilled, (state, action) => {
+      .addCase(signInByCard.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.session = action.payload.session;
-        state.isAuthenticated = !!action.payload.session;
+        state.session = { token: action.payload.token };
+        state.isAuthenticated = true;
         state.error = null;
       })
-      .addCase(signUp.rejected, (state, action) => {
+      .addCase(signInByCard.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
       })
       // Sign Out
       .addCase(signOut.pending, (state) => {
@@ -149,9 +181,13 @@ const authSlice = createSlice({
       })
       .addCase(checkSession.fulfilled, (state, action) => {
         state.loading = false;
-        state.session = action.payload;
-        state.user = action.payload?.user || null;
-        state.isAuthenticated = !!action.payload;
+        if (action.payload) {
+          state.user = action.payload.user;
+          state.isAuthenticated = true;
+        } else {
+          state.user = null;
+          state.isAuthenticated = false;
+        }
       })
       .addCase(checkSession.rejected, (state, action) => {
         state.loading = false;
